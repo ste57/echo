@@ -23,10 +23,6 @@ Echo has no commands — you just talk to it:
 "remember: we deploy from the release branch, not main"
 ```
 
-<h4>Optional reflexes pack</h4>
-
-Small shell hooks (no Python) that re-load your memory each session and after a compaction, cue the Learn pass at commits, and **deny writes to the editor's built-in memory store** so Echo stays the single source of truth. Opt-in — Echo asks before installing anything that runs code. See [`reference/reflexes.md`](reference/reflexes.md).
-
 <p align="center">
   <sub>Built for Claude Code.</sub>
 </p>
