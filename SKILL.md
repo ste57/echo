@@ -55,6 +55,8 @@ Most facts have one obvious home; on a boundary case, use the two questions. Pro
 
 > Reading intel is always on you — no hook force-feeds you the right note. The reflexes pack re-activates you and cues Learn, but it won't read for you. So in an Echo project, err toward looking: glance at the area the first time you touch it.
 
+**Subagents don't inherit Echo.** A spawned agent never invoked `/echo` and loads none of this, so delegation is two-way. Going in: copy the relevant context — the profile lines and intel notes that bear on the task — into its prompt; the knowledge doesn't follow it automatically. Coming back: the subagent can't learn (it never sees the user and doesn't know the protocol), so its report is *your* capture point — a solved gotcha in there is a Learn signal, run the pass on it. (The memory-guard still covers a subagent's tool calls.)
+
 ---
 
 ## Learn: capture what's worth keeping
