@@ -29,8 +29,9 @@ How you work *in this project*. One file per developer, named from a **slug of t
 user.email`** — the stable identity that matches the same person on every machine. **Slug rule:**
 lowercase the email, replace every character that isn't `a-z`, `0-9`, or `-` with `-`, collapse runs
 of `-`, and trim leading/trailing `-`. Example: `Alex.Kim@acme.io` → `.echo/profiles/alex-kim-acme-io.md`.
-(If `git config user.email` is unset — fresh clone, CI, no git — ask the user how to identify their
-profile or fall back to a slug of `git config user.name`; never create an empty-named `.md`.)
+(If `git config user.email` is unset, ask the user how to identify their profile. Non-interactive
+with git → slug of `git config user.name`; no git at all → `local` (single-user mode has one
+profile anyway). Never create an empty-named `.md`.)
 Committed to git; per-person, so two developers never edit the same file. The global profile
 underlies it — on conflict, the project line wins (it's more specific). No front-matter needed.
 
