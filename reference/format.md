@@ -45,8 +45,8 @@ underlies it — on conflict, the project line wins (it's more specific). No fro
 
 ## Project facts — `.echo/project.md`
 
-What the project *is*: stack, structure, domain. Stable — changes rarely. Always-on, so keep it
-tight. Front-matter optional.
+What the project *is*: stack, structure, domain. Stable — changes rarely. Read every session, so
+keep it tight. No front-matter needed.
 
 ```markdown
 # Harbor

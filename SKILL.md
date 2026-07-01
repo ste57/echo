@@ -156,6 +156,8 @@ The global `~/.echo/profile.md` isn't part of project setup — it's per-machine
 
 ## Keeping it light
 
+**The always-on files have a budget.** Your profiles and `project.md` are read every session, so bloat there is the expensive kind — every line taxes every future session. Keep each one to roughly a screenful (~30 lines). A save that pushes one past that still saves — but flag the size and offer a trim pass: merge overlapping lines, demote anything that no longer earns always-on cost (a rarely-needed fact belongs in intel). Like pruning, the trim is visible and approved, never silent.
+
 Upsert-don't-append keeps duplicates rare, not impossible — a misjudged "same note?" or a merge that kept both sides can still leave twins. When you happen to notice a note that's gone stale (its anchor no longer resolves) or two notes that overlap, flag it for the user — that's the maintenance, done by you, in passing. Acting on it is an on-request pass: review the changes with the user and let them approve. **Never prune silently or in the background** — removing knowledge is a deliberate, visible act, and Echo writes no maintenance files of its own.
 
 **Forgetting.** When the user says "forget that" / "that's no longer true" / "drop the note about X", treat it as a delete: locate the entry by topic or anchor, remove that note (or just the stale line within it; delete the leaf if it's left empty), and confirm in one line — *"removed: …"*. Git keeps the history, so it's reversible; don't agonize. This is distinct from a *change of mind* mid-task (which captures nothing) — it's an explicit instruction to remove something already saved.
