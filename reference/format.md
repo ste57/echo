@@ -148,12 +148,12 @@ Areas are shallow folders grouping related notes. Don't over-nest — one level 
   db/         migrations.md   queries.md
   ui/         components.md   styling.md
   build/      tooling.md
-  git/        conventions.md          ← the pre-commit hook points the model at this area on commit
+  git/        conventions.md          ← with the reflexes pack, the commit cue points here
 ```
 
 An area earns a folder when it has a few related notes. Until then a note can sit one level up
-(`intel/styling.md`). There is no generated index file — the directory listing plus each note's
-`when:` line *is* the index, read live.
+(`intel/styling.md`). There is no index file — the directory listing *is* the index: you read the
+front-matter of the notes in an area when you first touch that area, never the whole tree.
 
 ---
 

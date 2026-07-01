@@ -45,34 +45,34 @@ Most facts have one obvious home; on a boundary case, use the two questions. Pro
 
 **When this skill activates in an Echo project, do this first, before other work:** read `~/.echo/profile.md` (if present), your project profile `.echo/profiles/<you>.md` (`<you>` = your email slug — see `reference/format.md`), and `.echo/project.md`; then list `.echo/intel/` so you know what areas exist. If no profile matches your slug, that's normal for someone new to the project — proceed on the global profile + `project.md`, and create your profile the first time you have a profile-worthy line (per Learn).
 
-- **Always loaded:** your profile (global + project) and `project.md`. They orient everything.
-- **Intel — narrow, then read:** the first time you touch an area in a session, glance at the `.echo/intel/` listing, open the area that fits what you're doing, and let each note's `when:`/`glob:` confirm it applies *right now*. The directory plus the `when:` lines are the index — there's no generated one. Once per area, not per edit.
-- **Playbooks:** a playbook declares its trigger phrase in its frontmatter `when:` line (e.g. `when: user says "ship it"`). When the user says that phrase, read the playbook and follow it.
+- **Always read first:** your profile (global + project) and `project.md`. They orient everything.
+- **Intel — narrow, then read:** the first time you touch an area in a session, glance at the `.echo/intel/` listing, open the area that fits what you're doing, and let each note's `when:`/`glob:` confirm it applies *right now*. The directory plus the `when:` lines are the index — there is no separate index file. Once per area, not per edit.
+- **Playbooks:** a playbook declares its trigger phrase in its frontmatter `when:` line (e.g. `when: user says "ship it"`). When the user says that phrase, read the playbook and follow it. A routine-sounding phrase with no matching playbook isn't an error — just do the work; it's also a cue to offer one.
 
-**When your profile and the project disagree, the project wins.** A preference is a prior about how *you* like to work; a project rule (in intel or `project.md`) is how *this codebase* must be. If they clash — your profile likes 2-space, the project's linter enforces 4 — follow the project and say why.
+**When your profile and the project disagree, the project wins.** A preference is a prior about how *you* like to work; a project rule (in intel or `project.md`) is how *this codebase* must be. If they clash — your profile likes 2-space, the project's linter enforces 4 — follow the project and say why; if the clash is durable, the losing profile line is a candidate to update.
 
 **Memory can be stale.** It's shared through git, so it's only as current as your branch. Treat notes as strong priors, **not ground truth** — when a note disagrees with the code in front of you, the code wins, and the note is a candidate to update. A note whose `anchor:` points at code that's moved or gone is suspect; verify before trusting it.
 
-> Reading intel is always your judgment — no hook force-feeds you the right note. The reflexes pack re-activates you and cues Learn, but it won't read for you. So in an Echo project, err toward looking: glance at the area the first time you touch it.
+> Reading intel is always on you — no hook force-feeds you the right note. The reflexes pack re-activates you and cues Learn, but it won't read for you. So in an Echo project, err toward looking: glance at the area the first time you touch it.
 
 ---
 
 ## Learn: capture what's worth keeping
 
-The easy failure is capturing too much — notes nobody reads, drowning the ones that matter. That killed the predecessor. **Default to doing nothing.**
+The easy failure is capturing too much — notes nobody reads, drowning the ones that matter. **Default to doing nothing.**
 
 Learn keeps two kinds of thing: **knowledge** (a fact about how you or the project work → a profile line or an intel note) and **procedures** (a multi-step workflow the user runs by name → a playbook). A procedure is held to a higher bar — you'll later *run* it, so a wrong step does real harm, where a wrong note merely misinforms.
 
 **Noticing a signal is on you** — nothing reliably interrupts you to capture, so catch the moment:
 - **In the moment** — a correction, a teach, or a stated preference is said *to* you; act when it lands. A solved gotcha has no announcement: the instant something that fought you finally works, *that's* the cue — capture it before you move on, while the cause is fresh.
-- **At a natural stop** — finishing a task, or before a commit, take one beat to scan the session for anything worth keeping that you missed in the flow. (The reflexes pack cues this at commits; without it, make the beat a habit — it's the backstop for everything you didn't catch live.)
+- **At a natural stop** — finishing a task, or before a commit, take one beat to scan the session for anything worth keeping that you missed in the flow. (The reflexes pack cues this at commits and pushes; without it, make the beat a habit — it's the backstop for everything you didn't catch live.)
 
 **Knowledge** — when a signal fires, run these gates **in order. Stop at the first "no."**
 
-1. **Signal?** Did one of these actually happen — the user *corrected* you, a *gotcha got solved* (tried X, failed, Y worked — and you confirmed Y was the cause, not just the last thing you changed; if unsure, save tentative or not at all), the user *taught* you directly or stated a firm project rule ("remember…", "we always…"), or *stated a preference* out loud? A question, a one-off change of mind for this task, normal iteration, or being wrong once about something incidental are **not** signals — and venting, sarcasm, or a joke is not a correction; if a "correction" might be tone rather than policy, confirm before treating it as a signal. No → stop.
+1. **Signal?** Did one of these actually happen — the user *corrected* you, a *gotcha got solved* (tried X, failed, Y worked — and you confirmed Y was the cause, not just the last thing you changed; if unsure, save tentative or not at all), the user *taught* you directly or stated a firm project rule ("remember…", "we always…"), or *stated a preference* out loud? Noticed-but-unstated counts too — an implied preference or a pattern in how they work is a signal; it just routes to the *inferred* branch at gate 4. A question, normal iteration, or being wrong once about something incidental are **not** signals — and venting, sarcasm, or a joke is not a correction; if a "correction" might be tone rather than policy, confirm before treating it as a signal. No → stop.
 2. **Judge.** Would the next session get this wrong without it, *and* is it still true next week? Either "no" → stop.
 3. **Reconcile.** Look at what's already filed for this topic and its siblings. Already covered → stop. Similar → update it in place. **Contradicts what's there → ask before overwriting, never silently replace** (on yes, replace the body in place — git keeps the old version; on no, leave it and don't re-ask this session).
-4. **Save.** *Sure* (explicit teach, clear correction, a firm rule, or a preference the user states out loud) → save now, acknowledge in one line (*"noted: …"*) — **unless gate 3 flagged a contradiction, in which case its ask wins; never overwrite on a teach without confirming.** *Inferred* (a preference you picked up from how they work, a gotcha you noticed) → don't interrupt; raise it batched at the next natural stop. That pending batch lives only in this session's memory — a compaction wipes it — so flush inferred learns at a real breakpoint (task end, before a commit), not across a long session; a dropped inferred note is re-derivable, but don't bank on it. (Explicit teaches save immediately and are never at risk.)
+4. **Save.** *Sure* (explicit teach, clear correction, a firm rule, a preference the user states out loud, or a solved gotcha whose cause you confirmed) → save now and acknowledge in one line (*"noted: …"*). (A contradiction never reaches this step — gate 3's ask resolves it first; never overwrite on a teach without confirming.) *Inferred* (a preference you picked up from how they work, or a gotcha you *suspect* but didn't isolate) → don't interrupt; **propose** it, batched, at the next natural stop, and save what gets a yes. The pending batch lives only in this session's memory — a compaction wipes it — so propose at a real breakpoint (task end, before a commit) rather than across a long session; a dropped inferred note is re-derivable, but don't bank on it. (Explicit teaches save immediately and are never at risk.)
 
 **One pass:**
 > *"No — component helpers go in a sibling `*.utils.ts`, not the component file."* → correction ✓, durable ✓, nothing filed → save to `intel/ui/file-layout.md`, note it.
@@ -80,18 +80,18 @@ Learn keeps two kinds of thing: **knowledge** (a fact about how you or the proje
 
 **Where knowledge goes:** about *you* → your project profile (the default). About the *project* → intel or `project.md`. Two moves reach past this project, so offer them in one line rather than doing them silently:
 - **Make a preference permanent** — when a preference is clearly an identity-level habit true of you *everywhere* ("I never add co-author lines", "I always prefer functional style"), offer in one line — non-blocking — to *also* add it to your **global** profile so it follows you into every project. Held to a high bar; a project habit ("3-bullet PRs here") never qualifies. **Always save it project-scoped first regardless;** accepting global is additive and never removes the project copy; if declined or ignored it stays project-scoped and you don't re-offer.
-- **Write a fact as project intel** instead of a personal preference (every teammate reads it).
+- **Write what looked personal as project intel** — if the user *stated* it as a team rule ("we always…"), file it directly with no offer: into `project.md` if it's identity (stack, tooling, naming — "we always use pnpm"), into intel if it's a working convention or gotcha. If you're *inferring* it's shared rather than just theirs, offer first (every teammate will read it).
 
-**Procedures (playbooks).** You're never *told* to remember a workflow the way you're told a fact — you notice one, so a playbook is always **offered, never silently saved.** One surfaces when the user **names a routine** ("do the usual deploy"; "every time: test, commit, tag") or you **just ran a multi-step sequence** this task they might rerun by name. (You can't reliably spot a workflow repeated in a *past* session — don't try; lean on these in-the-moment cues.) Before offering:
+**Procedures (playbooks).** A playbook is always **offered, never silently saved** — even when the user names the routine outright, they get a draft to edit, not a silent write. One surfaces when the user **names a routine** ("do the usual deploy"; "every time: test, commit, tag") or you **just ran a multi-step sequence** this task they might rerun by name. (You can't reliably spot a workflow repeated in a *past* session — don't try; lean on these in-the-moment cues.) Before offering:
 - **Worth it?** A stable, nameable routine of several steps the user treats as one thing — not a one-off, a single command, or something trivially re-derived. Unsure → it isn't one.
-- **Safe to suggest?** **Never** offer a workflow whose steps delete, force-push, deploy beyond local, touch credentials, or migrate shared data — capture the *shape* as intel ("release runs `make deploy` — do it by hand"), never a playbook that runs it.
-- **Draft, show, confirm.** Rebuild the steps from what actually ran, drop anything situational, strip auto-confirm flags (`--force`/`--yes`), and show the draft for the user to edit and name. Saves only on a yes; raise it batched at a breakpoint, never mid-task; if declined, don't re-offer.
+- **Safe to suggest?** **Never** offer a workflow whose steps delete, force-push, deploy beyond local, touch credentials, or migrate shared data — capture the *shape* as intel ("release runs `make deploy` — do it by hand"), never a playbook that runs it. If the user *explicitly asks* for such a playbook anyway, build it their way — but write the dangerous step as "confirm with the user, then run …"; that confirmation is part of the playbook and never stripped.
+- **Draft, show, confirm.** Rebuild the steps from what actually ran, drop anything situational, strip auto-confirm flags (`--force`/`--yes`; stripping a flag never rescues a workflow the safety bar barred), and show the draft for the user to edit and name. Saves only on a yes; raise it batched at a breakpoint, never mid-task; if declined, don't re-offer.
 
 If a single teach carries *both* a repeatable sequence and a durable fact, split it: the steps → a playbook, the fact → intel, and the playbook *references* the fact rather than restating it, so the fact keeps one home.
 
-**Never write secrets** — credentials, tokens, internal hostnames/IPs, customer data — into any `.echo/` file. It's committed to git and forever. If a gotcha's fix involves a secret, capture the *shape* ("staging needs an internal auth header — get it from 1Password"), never the value.
+**Never write secrets** — credentials, tokens, internal hostnames/IPs, customer data — into any `.echo/` file. It's committed to git and forever. If a gotcha's fix involves a secret, capture the *shape* ("staging needs an internal auth header — get it from 1Password"), never the value — and say in the acknowledgment that the value was left out on purpose.
 
-See `reference/learn.md` for worked examples of each signal, including the inferred-defer and must-fire cases.
+See `reference/learn.md` for the reasoning at the edges — where each signal is easy to misapply, and the calls that should resolve to *do nothing* — including the inferred-defer and non-negotiable-rule cases.
 
 ---
 
@@ -123,7 +123,7 @@ path is in the matcher config.
 - **Reuse an area before coining one.** Before filing, list `intel/`'s existing area folders and use the closest fit — the area is the *subsystem the fact is about* (`api`, `db`, `ui`), not the task. Only create a new area when none fits; otherwise the same fact scatters across `api/`, `auth/`, and `security/`. (Read areas the same way: the subsystem you're working in is the subsystem you file under.)
 - **Scope `glob:` tightly.** It's a precision *hint* for when a note is relevant — the files the fact bears on — that you use when reading an area to judge whether a note touches the file in front of you. Match only where it applies; a glob covering half the repo guides nothing. (There's no auto-injection hook in v1, so `glob:` informs your judgment rather than firing on its own.)
 - **One note, one `when:`.** If you can't write a single honest `when:` — it fires in two different situations — it's two notes; split it.
-- **Reconcile before writing** (gate 3): update in place, don't append a near-duplicate; if a sibling would compete for the same trigger, narrow both `when:` lines so a future agent can tell them apart.
+- **Reconcile before writing** (gate 3): upsert — update in place, don't append a near-duplicate; if a sibling would compete for the same trigger, narrow both `when:` lines so a future agent can tell them apart.
 
 Full field reference and examples: `reference/format.md`.
 
