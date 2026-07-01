@@ -63,12 +63,12 @@ Say "card", never "ticket" or "task" — the UI and codebase use "card" througho
 ## Intel note (leaf) — `.echo/intel/<area>/<note>.md`
 
 One discovered fact or gotcha, scoped by front-matter. Small — one idea per note. The body is
-the knowledge; the front-matter is how it gets found and (optionally) enforced.
+the knowledge; the front-matter is how it gets found.
 
 ```markdown
 ---
 when: writing or editing auth / protected endpoints
-glob: [apps/api/**/route.ts, **/middleware.ts]
+glob: ["apps/api/**/route.ts", "**/middleware.ts"]
 anchor: apps/api/src/auth/clerk.ts
 ---
 Protected routes call `requireUser()` from auth/clerk.ts, never read the session directly.
@@ -109,27 +109,28 @@ describe when it fires, it's two notes; split it. **Deterministic path** — nam
 topic, not the moment (`auth.md`, not `auth2.md`), so the same fact learned twice lands at the same
 path and merges cleanly instead of forking.
 
-### Must-fires
+### Enforcement
 
 v1 ships exactly one hard gate: the reflexes pack's **memory-guard** (Echo owns memory — see
-`reference/reflexes.md`). It's a pack hook, not a note field — there is **no per-note `block:` in
-v1**. A "must never ship" rule beyond memory ownership is captured as **strong intel** (the note
-teaches it); a real hard gate is a deliberate, rare future addition, never the default. Every gate is
-weight; priors are the rule.
+`reference/reflexes.md`). It's a pack hook, not anything in a note — **front-matter carries no
+enforcement field (no `block:` or the like); nothing in a note blocks anything.** A "must never ship" rule beyond memory
+ownership is captured as **strong intel** (the note teaches it); a real hard gate is a deliberate,
+rare future addition, never the default. Every gate is weight; priors are the rule.
 
 ---
 
 ## Playbook — `.echo/playbooks/<name>.md`
 
-A named workflow, run on request. Loaded only when the user says its trigger phrase. The body is
-the steps.
+A named workflow, run on request. Read only when the user says its trigger phrase. The body is
+the steps. A playbook's front-matter is just `when:` — and here it's a literal trigger phrase, not
+a situation; `glob:`/`anchor:` don't apply.
 
 ```markdown
 ---
 when: user says "ship it" / "ship this"
 ---
 1. Run `pnpm test && pnpm typecheck`. Stop if either fails.
-2. Conventional-commit message, no Co-Authored-By.
+2. Write a conventional-commit message.
 3. Push the branch, open a PR with a 3-bullet description.
 4. Put the Linear ticket id in the PR title.
 ```
