@@ -2,7 +2,7 @@
 
 <p align="center">
   Project memory for AI agents.<br>
-  Light, personal, every project.
+  Plain markdown in your repo. Light, personal, every project.
 </p>
 
 <h4>Paste into Claude Code</h4>
@@ -13,7 +13,7 @@ Install https://github.com/ste57/echo as a skill
 
 <h4>Use it</h4>
 
-Echo has no commands — you just talk to it:
+Nothing to memorize — you just talk:
 
 ```
 "set up Echo in this project"

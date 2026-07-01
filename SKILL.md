@@ -8,8 +8,8 @@ description: Lightweight project memory for a coding agent. Use when working in 
 Echo gives you **memory and priors** so you don't start each session blind. Treat it as context to lean on, not rules to satisfy — it informs how you work, it doesn't constrain it.
 
 **In an Echo project you do three things:**
-1. **Start oriented** — your profile + `project.md` load at session start.
-2. **Glance before you touch** — the first time you work in an area this session, look at its intel. The look isn't optional; acting on what you find is judgment.
+1. **Start oriented** — read your profile + `project.md` at session start. (Nothing loads them for you; the optional reflexes pack — see Setup — reminds you, but the reading is yours.)
+2. **Glance before you touch** — the first time you work in an area this session, whether reading or editing, look at its intel. The look isn't optional; acting on what you find is judgment.
 3. **Capture sparingly** — watch for a real signal (a correction, a teach, a stated preference, a gotcha you just solved) and note it; absent one, do nothing.
 
 Memory lives in plain markdown under `.echo/` (and your global profile in `~/.echo/`). It's small on purpose: load a little always, reach for the rest only when relevant.
@@ -23,7 +23,7 @@ Five kinds of file (profiles come in two scopes). Which one a fact belongs in is
 1. **About the developer, or the project?** About you → a **profile**. About the project → `project.md` or intel.
 2. **(If about the project) identity or a discovered fact?** What the project *is* and won't change session-to-session → **`project.md`**. Something you *discovered* by working — a convention, trap, or quirk → **intel**.
 
-| File | Holds | Loaded |
+| File | Holds | You read it |
 |------|-------|--------|
 | `~/.echo/profile.md` | How *you* work, everywhere | always |
 | `.echo/profiles/<you>.md` | How you work *here* (overrides global) | always |
@@ -35,7 +35,7 @@ Five kinds of file (profiles come in two scopes). Which one a fact belongs in is
 
 **The trap is team conventions.** "We always squash-merge" *feels* like a preference, but it's shared and project-true — so it's **intel** (e.g. `intel/git/`), never a personal profile. A profile is only ever about *you*.
 
-Most facts have one obvious home; on a boundary case, use the two questions. Profiles never collide (separate per-person files). Shared files (`project.md`, intel) *can* still conflict at git-merge time, but small single-topic notes keep any conflict to a few lines. When a shared file *does* clash — a teammate wrote the same leaf, or git left a merge conflict — never accept last-writer-wins: run `git blame` on the note to see who wrote the standing line and when, surface both versions to the user, and let them choose or merge.
+Most facts have one obvious home; on a boundary case, use the two questions. Profiles never collide (separate per-person files). Shared files (`project.md`, intel) *can* still conflict at git-merge time, but small single-topic notes keep any conflict to a few lines. When a shared file *does* clash — a teammate wrote the same leaf, or git left a merge conflict — never accept last-writer-wins: check the note's history (`git blame`; during a live merge conflict, `git log --merge -p -- <note>` shows both sides) to see who wrote what and when, surface both versions to the user, and let them choose or merge. (Two *live* sessions on the same machine can also race the same note — last save wins, and v1 doesn't lock; an accepted, rare, small loss.)
 
 **Echo is the memory — use it, not the model's built-in memory.** Everything you learn goes in `.echo/`, never in `CLAUDE.md`, scratch files, or session memory. Echo *replaces* those for what you remember: one store, inspectable, shared, and versioned. If a project *already* has memory-like content in a `CLAUDE.md`, don't migrate it silently — note the overlap once and offer to move it into `.echo/`; treat `.echo/` as authoritative meanwhile. With the reflexes pack installed (optional shell hooks — see Setup and `reference/reflexes.md`) the built-in-store half of this is enforced, not just asked: access to the runtime's built-in memory store — reads as well as writes — is denied (`CLAUDE.md` and scratch files stay covered by this rule, not by a gate). That's the pack's one hard gate — the **memory-guard**.
 
@@ -104,7 +104,7 @@ One idea per note. Front-matter carries its trigger:
 ```markdown
 ---
 when: writing or editing auth / protected endpoints
-glob: [apps/api/**/route.ts, **/middleware.ts]
+glob: ["apps/api/**/route.ts", "**/middleware.ts"]
 anchor: apps/api/src/auth/clerk.ts
 ---
 Protected routes call `requireUser()` from auth/clerk.ts, never read the session directly.

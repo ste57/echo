@@ -1,7 +1,7 @@
 # Echo file formats
 
 Concrete shapes for every Echo file, with examples. SKILL.md governs *when* to read/write these;
-this is *what* they look like. Read it when you're about to create or edit an Echo file.
+this is *what* they look like. Read this file when you're about to create or edit an Echo file.
 
 ---
 
