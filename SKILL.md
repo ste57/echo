@@ -26,12 +26,12 @@ Five kinds of file (profiles come in two scopes). Which one a fact belongs in is
 | File | Holds | You read it |
 |------|-------|--------|
 | `~/.echo/profile.md` | How *you* work, everywhere | always |
-| `.echo/profiles/<you>.md` | How you work *here* (overrides global) | always |
+| `.echo/profiles/<name>.md` | How you work *here* (overrides global) | always |
 | `.echo/project.md` | What the project *is* (stack, structure, domain) | always |
 | `.echo/intel/<area>/<note>.md` | A discovered fact or gotcha, scoped by `when:` | when relevant |
 | `.echo/playbooks/<name>.md` | A named workflow, run on request | on mention |
 
-**Your profile has two scopes — both Echo's, since Echo is your memory layer.** The **global** profile (`~/.echo/profile.md`) is you across every project; the **project** profile (`.echo/profiles/<you>.md`, where `<you>` is a slug of your `git config user.email`, so the same person matches the same file on every machine) is you *here* and inherits the global, overriding it where they differ. A preference defaults to the project scope; it becomes **permanent** (global) only at a high bar — see Learn.
+**Your profile has two scopes — both Echo's, since Echo is your memory layer.** The **global** profile (`~/.echo/profile.md`) is you across every project; the **project** profile (`.echo/profiles/<name>.md` — a friendly filename; the file's `email:` front-matter is matched against your `git config user.email`, so the same person matches the same file on every machine) is you *here* and inherits the global, overriding it where they differ. A preference defaults to the project scope; it becomes **permanent** (global) only at a high bar — see Learn.
 
 **The trap is team conventions.** "We always squash-merge" *feels* like a preference, but it's shared and project-true — so it's **intel** (e.g. `intel/git/`), never a personal profile. A profile is only ever about *you*.
 
@@ -43,7 +43,7 @@ Most facts have one obvious home; on a boundary case, use the two questions. Pro
 
 ## Reading: reach for what's relevant
 
-**When this skill activates in an Echo project, do this first, before other work:** read `~/.echo/profile.md` (if present), your project profile `.echo/profiles/<you>.md` (`<you>` = your email slug — see `reference/format.md`), and `.echo/project.md`; then list `.echo/intel/` so you know what areas exist. If no profile matches your slug, that's normal for someone new to the project — proceed on the global profile + `project.md`, and create your profile the first time you have a profile-worthy line (per Learn).
+**When this skill activates in an Echo project, do this first, before other work:** read `~/.echo/profile.md` (if present), your project profile — the file in `.echo/profiles/` whose `email:` front-matter matches your `git config user.email` (see `reference/format.md`) — and `.echo/project.md`; then list `.echo/intel/` so you know what areas exist. If no profile matches, that's normal for someone new to the project — proceed on the global profile + `project.md`, and create your profile the first time you have a profile-worthy line (per Learn).
 
 - **Always read first:** your profile (global + project) and `project.md`. They orient everything.
 - **Intel — narrow, then read:** the first time you touch an area in a session, glance at the `.echo/intel/` listing, open the area that fits what you're doing, and let each note's `when:`/`glob:` confirm it applies *right now*. The directory plus the `when:` lines are the index — there is no separate index file. Once per area, not per edit.
@@ -143,7 +143,7 @@ If there's no `.echo/` yet and the user wants it here:
 
 1. **Ask first**, then create `.echo/project.md`, `.echo/profiles/`, `.echo/intel/`, `.echo/playbooks/`.
 2. Seed `project.md` from what you can see (README, structure, stack) — draft it, let the user correct it. Scan for and strip anything secret-shaped before writing.
-3. Create their profile at `.echo/profiles/<you>.md` (one file per developer; `<you>` = the email slug defined in `reference/format.md`).
+3. Create their profile in `.echo/profiles/` — a friendly filename with an `email:` front-matter key for matching (format in `reference/format.md`).
 4. Commit all of `.echo/` so the team shares it — including project profiles (per-person files don't collide). Only the global `~/.echo/profile.md` stays out of any repo. (No git? Skip this step — single-user mode, below.)
 
 The global `~/.echo/profile.md` isn't part of project setup — it's per-machine, created lazily the first time a preference is promoted to global; its absence just means no global priors yet. **Echo assumes git in v1** (identity from `git config user.email`, sharing via commit) — any git host or a purely local repo; nothing assumes GitHub or a specific forge. With no git at all it still works as single-user local memory — one profile, no team sharing. Migrating an existing **squad** setup (a `.squad/` directory — Echo's predecessor system) is out of scope for v1: there's no importer — offer to port still-true facts into `.echo/` by hand, never silently.

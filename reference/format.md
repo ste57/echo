@@ -23,23 +23,31 @@ repo, it belongs in a project profile, not here.
 
 ---
 
-## Project profile — `.echo/profiles/<you>.md`
+## Project profile — `.echo/profiles/<name>.md`
 
-How you work *in this project*. One file per developer, named from a **slug of their `git config
-user.email`** — the stable identity that matches the same person on every machine. **Slug rule:**
-lowercase the email, replace every character that isn't `a-z`, `0-9`, or `-` with `-`, collapse runs
-of `-`, and trim leading/trailing `-`. Example: `Alex.Kim@acme.io` → `.echo/profiles/alex-kim-acme-io.md`.
-(If `git config user.email` is unset, ask the user how to identify their profile. Non-interactive
-with git → slug of `git config user.name`; no git at all → `local` (single-user mode has one
-profile anyway). Never create an empty-named `.md`.)
-Committed to git; per-person, so two developers never edit the same file. The global profile
-underlies it — on conflict, the project line wins (it's more specific). No front-matter needed.
+How you work *in this project*. One file per developer. The **filename is friendly** — default to
+the local part of the email (`alex.kim@acme.io` → `alex-kim.md`), and the user can pick any name;
+the **matching key is the `email:` front-matter field**, checked against `git config user.email` —
+the stable identity that matches the same person on every machine.
 
 ```markdown
+---
+email: alex.kim@acme.io
+---
 - PR descriptions: 3 bullets max, no test plans.
 - Run the test suite before asking me to review.
 - I dislike barrel files (re-export index.ts); import direct.
 ```
+
+**Finding yours:** list `.echo/profiles/`, match each file's `email:` line against your
+`git config user.email` (case-insensitive). No match → you're new here. A profile missing its
+`email:` line can't be matched — flag it once. **Names must be unique** — if the name you want is
+taken, qualify it (`alex-k.md`); two developers never share a file.
+(If `git config user.email` is unset, ask the user how to identify their profile. Non-interactive
+with git → `git config user.name`; no git at all → `local.md`, no `email:` needed — single-user
+mode has one profile anyway. Never create an empty-named `.md`.)
+Committed to git. The global profile underlies it — on conflict, the project line wins (it's more
+specific).
 
 ---
 
