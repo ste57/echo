@@ -12,10 +12,12 @@ reading, matching, and judging is the skill's job; the hooks only guarantee the 
 - **session-start** → tells the model to invoke `/echo` and read `.echo/` memory, so every session
   (and every post-compaction continuation) starts oriented. On a plain resume it only confirms Echo
   is still active — the context already loaded is still there, so no re-invoke.
-- **memory-guard** → the one **hard gate**: denies any access (read or write — it's wired
-  to all tools) to the runtime's built-in memory store (`~/.claude/projects/…/memory/`). Echo owns
-  memory; the store is stale and invisible to the team, so neither writing to it nor trusting its
-  contents is allowed. It's the only hard gate the pack ships.
+- **memory-guard** → the one **hard gate**, two denies: (a) any access (read or write — it's wired
+  to all tools) to the runtime's built-in memory store (`~/.claude/projects/…/memory/`) — Echo owns
+  memory; the store is stale and invisible to the team; (b) a **subagent** writing into `.echo/` —
+  a subagent never read the skill, so its captures skip every Learn gate (proven in the field by
+  front-matter-less notes); it reports findings back and the main agent captures. It's the only
+  hard-gate hook the pack ships.
 - **pre-commit** → on a git commit/push, cues the Learn pass and points the model at git-area intel.
   A commit is a real "natural stop" with a model turn after it — the dependable capture checkpoint.
 - **user-prompt** → when you say "remember…", cues the Learn pass immediately rather than leaving it
@@ -105,6 +107,14 @@ the harness uses the file tools). Fail-open: anything it can't clearly identify 
 payload=$(cat 2>/dev/null) || exit 0
 # flatten newlines and un-escape JSON solidus (\/ -> /) so neither can evade the match
 norm=$(printf '%s' "$payload" | tr '\n' ' ' | sed 's#\\/#/#g')
+# Subagent writes to .echo/ skip every Learn gate (they never read the skill) — deny them.
+# Subagent context is identified by the transcript_path living under .../subagents/; fail-open if absent.
+if printf '%s' "$norm" | grep -q '/subagents/'; then
+  printf '%s' "$norm" | grep -Eiq '"(file_path|path|notebook_path)"[[:space:]]*:[[:space:]]*"[^"]*\.echo/' && {
+    printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Echo memory is written by the main agent only — report this finding back in your final message instead; the main agent runs the Learn gates and captures what passes."}}'
+    exit 0
+  }
+fi
 # case-insensitive (-i: macOS FS is case-insensitive); anchored to the real store layout; trailing /memory or end-of-value
 printf '%s' "$norm" | grep -Eiq '"(file_path|path|notebook_path)"[[:space:]]*:[[:space:]]*"[^"]*/\.claude/projects/[^"]*/memory(/|")' || exit 0
 printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Echo owns memory — do not read or write the runtime built-in memory store (it is stale and invisible to the team). Capture memory through Echo instead: a line in your profile, or an intel note under .echo/."}}'

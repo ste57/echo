@@ -138,6 +138,11 @@ whole leaf, if that empties it), and confirm in one line. Git keeps the history,
 ## Not a learning moment
 
 The calls that should resolve to **do nothing** — this is where over-capture creeps in:
+- **Structure visible in the code.** Coupling, naming, or flow the next session would see by opening
+  the files involved ("these two files change together — their classes reference each other") — a
+  note restating the code adds weight, not knowledge. Intel is for what the code *hides*.
+- **Narrating your own diff.** What you just changed, and why it fits, belongs in the commit and PR
+  description — not in memory. If the note only makes sense knowing what this session did, drop it.
 - A **question** you answered — nothing durable changed.
 - A **one-off change of mind** mid-task ("actually, do it the other way") — it enters as a
   correction but dies at the judge: situational, not durable.
