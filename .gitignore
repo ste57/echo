@@ -1,1 +1,3 @@
 .DS_Store
+.echo/
+.claude/settings.local.json
