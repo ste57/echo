@@ -127,7 +127,7 @@ payload=$(cat 2>/dev/null) || exit 0
 # with word boundaries so neither "legit push" nor "gitcommit" match
 cmd=$(printf '%s' "$payload" | tr '\n' ' ' | grep -Eo '"command"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1)
 printf '%s' "$cmd" | grep -Eq '(^|[^[:alnum:]])git[^[:alnum:]].*(commit|push)' || exit 0
-printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"Echo: before you commit — (1) if .echo/intel/git/ exists, read it and follow the git conventions there; (2) run the Learn pass on anything learned this session not yet in .echo/ (a correction, a solved gotcha, a stated preference, or a repeatable workflow worth a playbook). Default to nothing; keep only what passes the judge."}}'
+printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"Echo: before you commit — (1) if .echo/intel/git/ exists, read it and follow the git conventions there; (2) run the Learn pass on anything learned this session not yet in .echo/ (a correction, a solved gotcha, a stated preference, or a repeatable workflow worth a playbook). Default to nothing; keep only what passes the judge. If you are a subagent on a delegated task, skip (2) entirely: do not write to .echo/ — report the finding back; the main agent captures."}}'
 exit 0
 ```
 
@@ -203,8 +203,10 @@ reliable path; PostCompact is a redundant safety net, not the primary mechanism.
   priors are the default.
 - **Fail-open.** Any hook error → no output → no effect. A broken hook never blocks your editor; only
   the memory-guard's deny does.
-- **Subagents.** PreToolUse hooks fire for a spawned agent's tool calls too, so the memory-guard and
-  commit cue cover them. What hooks can't do is give a subagent your memory — see SKILL.md on
+- **Subagents.** PreToolUse hooks fire for a spawned agent's tool calls too: the memory-guard covers
+  them, and the commit cue tells a subagent to report findings back rather than write `.echo/`
+  itself (a subagent never read the skill, so its captures skip every gate — proven in the field by
+  a front-matter-less note). What hooks can't do is give a subagent your memory — see SKILL.md on
   delegation for that.
 - **`CLAUDE_PROJECT_DIR`** locates the project; hooks fall back to `$PWD`. Nested checkouts with more
   than one `.echo/` aren't supported — assume the repo root.
