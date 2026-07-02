@@ -57,6 +57,10 @@ When the user opts in:
 `.echo/hooks/`. Leave the rest of `.echo/`
 (the memory itself) intact.
 
+**Upgrade:** re-run the install. The `.echo/hooks/*.sh` bodies are pack-owned — overwrite them
+with the current versions; the settings wiring is already idempotent (entries containing
+`.echo/hooks/` are skipped, not duplicated).
+
 **No interpreter dependency.** The hooks are POSIX `sh`, present on every macOS/Linux machine.
 Windows without a POSIX shell isn't supported in v1 — Echo still works as a pure skill, just without
 reflexes.
