@@ -20,7 +20,7 @@ Nothing to memorize — you just talk:
 ```
 
 ```
-"remember: we deploy from the release branch, not main"
+"echo: we deploy from the release branch, not main"
 ```
 
 <p align="center">
