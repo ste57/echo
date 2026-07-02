@@ -171,6 +171,8 @@ Before adding a note, look for an existing one on the same topic (same area, sim
 
 - **None exists** → create the note.
 - **One exists and you're adding detail** → edit it in place. Don't create a near-duplicate.
+  But growth is the counterweight: an update that would make the note answer a second situation
+  or push it past a screenful is a split into narrowed siblings, not an edit.
 - **One exists and your fact contradicts it** → don't silently overwrite. Surface it to the user:
   *"intel/api/auth.md says X; this suggests Y — replace it?"*
 - **A teammate's note (or a merge conflict) clashes with yours** → never last-writer-wins. Run

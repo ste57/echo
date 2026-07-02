@@ -125,7 +125,7 @@ path is in the matcher config.
 - **Reuse an area before coining one.** Before filing, list `intel/`'s existing area folders and use the closest fit — the area is the *subsystem the fact is about* (`api`, `db`, `ui`), not the task. Only create a new area when none fits; otherwise the same fact scatters across `api/`, `auth/`, and `security/`. (Read areas the same way: the subsystem you're working in is the subsystem you file under.)
 - **Scope `glob:` tightly.** It's a precision *hint* for when a note is relevant — the files the fact bears on — that you use when reading an area to judge whether a note touches the file in front of you. Match only where it applies; a glob covering half the repo guides nothing. (There's no auto-injection hook in v1, so `glob:` informs your judgment rather than firing on its own.)
 - **One note, one `when:`.** If you can't write a single honest `when:` — it fires in two different situations — it's two notes; split it.
-- **Reconcile before writing** (gate 3): upsert — update in place, don't append a near-duplicate; if a sibling would compete for the same trigger, narrow both `when:` lines so a future agent can tell them apart.
+- **Reconcile before writing** (gate 3): upsert — update in place, don't append a near-duplicate; if a sibling would compete for the same trigger, narrow both `when:` lines so a future agent can tell them apart. Upsert has a counterweight: if an update would make a note answer a second situation or grow past a screenful, split it into siblings with narrowed `when:` lines instead of appending.
 
 Full field reference and examples: `reference/format.md`.
 
