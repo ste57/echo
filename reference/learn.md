@@ -108,7 +108,8 @@ Two hard boundaries:
   *shape* as intel ("release force-pushes the tag — run it by hand") and stop. Stripping a `--force`
   flag never rescues a barred workflow; the bar is on the step, not the flag. (An *explicit user
   request* for such a playbook is different — build it, but write the dangerous step as "confirm
-  with the user, then run …", never bare.)
+  with the user, then run …", never bare. Only the user can waive that confirm; the step then
+  records the waiver.)
 - **A one-off isn't a playbook.** A clever one-time untangle (stash, rebase, pop the stash) with no
   nameable trigger → do nothing.
 
