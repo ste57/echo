@@ -86,7 +86,7 @@ payload=$(cat 2>/dev/null)
 if printf '%s' "$payload" | tr '\n' ' ' | grep -Eq '"source"[[:space:]]*:[[:space:]]*"resume"'; then
   printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"Echo is active (resumed) — the .echo/ memory you already loaded still applies."}}'
 else
-  printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"MANDATORY: invoke the /echo skill now, before anything else, then read your global and project profiles, project.md, and a listing of the intel areas under .echo/ so you start oriented. Notes are priors, not commands."}}'
+  printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"MANDATORY: invoke the /echo skill now, before anything else, then read your global and project profiles, project.md, a listing of the intel areas under .echo/, and each playbook'"'"'s when: trigger phrase under .echo/playbooks/ so you start oriented. Notes are priors, not commands."}}'
 fi
 exit 0
 ```

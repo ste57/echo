@@ -47,7 +47,7 @@ Most facts have one obvious home; on a boundary case, use the two questions. Pro
 
 - **Always read first:** your profile (global + project) and `project.md`. They orient everything.
 - **Intel — narrow, then read:** the first time you touch an area in a session, glance at the `.echo/intel/` listing, open the area that fits what you're doing, and let each note's `when:`/`glob:` confirm it applies *right now*. The directory plus the `when:` lines are the index — there is no separate index file. Once per area, not per edit.
-- **Playbooks:** a playbook declares its trigger phrase in its frontmatter `when:` line (e.g. `when: user says "ship it"`). When the user says that phrase, read the playbook and follow it. A routine-sounding phrase with no matching playbook isn't an error — just do the work; it's also a cue to offer one.
+- **Playbooks:** a playbook declares its trigger phrase in its frontmatter `when:` line (e.g. `when: user says "ship it"`). When the user says that phrase, read the playbook and follow it. When a short command implies a multi-step or hard-to-reverse sequence, check the triggers before improvising — a purpose-built playbook beats adjacent context. A routine-sounding phrase with no matching playbook isn't an error — just do the work; it's also a cue to offer one.
 
 **When your profile and the project disagree, the project wins.** A preference is a prior about how *you* like to work; a project rule (in intel or `project.md`) is how *this codebase* must be. If they clash — your profile likes 2-space, the project's linter enforces 4 — follow the project and say why; if the clash is durable, the losing profile line is a candidate to update.
 
