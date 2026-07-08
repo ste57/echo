@@ -65,8 +65,9 @@ with the current versions; the settings wiring is already idempotent (entries co
 Windows without a POSIX shell isn't supported in v1 — Echo still works as a pure skill, just without
 reflexes.
 
-**If something is wrong:** the only hook that can block is the memory-guard, and only on access to
-the built-in memory store. To disable any hook, remove its entry from settings; the memory stays.
+**If something is wrong:** the only hook that can block is the memory-guard, and only on its two
+denies — access to the built-in memory store, or a subagent's write into `.echo/`. To disable any
+hook, remove its entry from settings; the memory stays.
 
 ---
 
