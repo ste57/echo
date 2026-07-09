@@ -22,6 +22,10 @@ reading, matching, and judging is the skill's job; the hooks only guarantee the 
   A commit is a real "natural stop" with a model turn after it — the dependable capture checkpoint.
 - **user-prompt** → when you say "remember…", cues the Learn pass immediately rather than leaving it
   to the model to notice. The reliable path for an explicit teach.
+- **intel-cue** → before a file-mutating tool call, runs the deterministic glob filter over intel
+  front-matter (`glob:` lines only, never bodies) and names matching notes, once per file per
+  session. A reminder, not an injection: it surfaces paths, never content; relevance stays the
+  skill's judgment.
 
 **Honest limit:** no hook can flush *inferred* learnings right before an auto-compaction (the model
 doesn't run between the trigger and the summary). So the dependable capture moments are explicit
@@ -38,7 +42,7 @@ into the project** (`<project>/.echo/hooks/`), reads nothing but the hook payloa
 
 When the user opts in:
 
-1. Create `<project>/.echo/hooks/` and write the four `.sh` files below.
+1. Create `<project>/.echo/hooks/` and write the five `.sh` files below.
 2. Wire them into settings (see **Wiring**), **idempotently**: read the existing `hooks` block and
    *append* Echo's entries into each event's array; skip any whose command already contains
    `.echo/hooks/` (so re-install doesn't double-register). Never overwrite a user's hooks. Also add
@@ -172,6 +176,52 @@ exit 0
 
 ---
 
+## intel-cue — `.echo/hooks/intel_cue.sh`
+
+The recurring field failure is an agent editing a file whose intel exists but goes unread —
+memory blindness at the leaf. This hook closes the deterministic half: on a file-mutating tool
+call it matches the file's path against each intel note's `glob:` front-matter and names the
+matching notes, once per file per session. It reads only `glob:` lines, never a note's body;
+the skill still reads and judges. Globs use shell `case` matching (`**` behaves as `*`, so a
+pattern may over-match slightly — the cue is a nudge, so that costs a line of context, not a
+block). Bash-smuggled edits (a redirect in a script) aren't seen — same documented limit as the
+memory-guard.
+
+```sh
+#!/bin/sh
+# Echo intel cue: deterministic glob filter over intel front-matter. Names matching notes; never reads bodies, never judges.
+dir="${CLAUDE_PROJECT_DIR:-$PWD}"
+[ -d "$dir/.echo/intel" ] || exit 0
+payload=$(cat 2>/dev/null) || exit 0
+norm=$(printf '%s' "$payload" | tr '\n' ' ' | sed 's#\\/#/#g')
+file=$(printf '%s' "$norm" | grep -Eo '"(file_path|notebook_path)"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/^.*:[[:space:]]*"//; s/"$//')
+[ -n "$file" ] || exit 0
+rel=${file#"$dir"/}
+hits=""
+for note in "$dir"/.echo/intel/*.md "$dir"/.echo/intel/*/*.md; do
+  [ -f "$note" ] || continue
+  globs=$(sed -n '1,10p' "$note" | grep '^glob:' | sed 's/^glob:[[:space:]]*//' | tr -d '[]"' | tr ',' ' ')
+  [ -n "$globs" ] || continue
+  for g in $globs; do
+    case "$rel" in
+      $g) hits="$hits ${note#"$dir"/}"; break;;
+    esac
+  done
+done
+[ -n "$hits" ] || exit 0
+# once per file per session (fail-open: no session_id -> cue every time)
+sid=$(printf '%s' "$norm" | grep -Eo '"session_id"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/^.*"\([^"]*\)"$/\1/')
+if [ -n "$sid" ]; then
+  mark="/tmp/echo-cue-$(printf '%s' "$sid $rel" | cksum | tr ' \t' '--')"
+  [ -e "$mark" ] && exit 0
+  : > "$mark" 2>/dev/null
+fi
+printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"Echo: intel declares itself relevant to this file —%s. If you have not read it this session, read it before this edit; relevance is yours to judge."}}\n' "$hits"
+exit 0
+```
+
+---
+
 ## Wiring — settings.json
 
 Append into `.claude/settings.json` (team) or `.claude/settings.local.json` (personal). The
@@ -194,7 +244,9 @@ Append into `.claude/settings.json` (team) or `.claude/settings.local.json` (per
       { "matcher": ".*", "hooks": [ { "type": "command",
         "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/memory_guard.sh\"" } ] },
       { "matcher": "Bash", "hooks": [ { "type": "command",
-        "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/pre_commit.sh\"" } ] }
+        "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/pre_commit.sh\"" } ] },
+      { "matcher": "Edit|Write|MultiEdit|NotebookEdit", "hooks": [ { "type": "command",
+        "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/intel_cue.sh\"" } ] }
     ]
   }
 }
@@ -215,8 +267,9 @@ reliable path; PostCompact is a redundant safety net, not the primary mechanism.
 - **Cue ≠ obey, inject ≠ enforce.** Every hook here only puts a short instruction in front of you; it
   doesn't act. The skill does the work. The single exception is **memory-guard**, which actually
   denies — the one thing Echo enforces rather than asks.
-- **Static by design.** The hooks read only the hook payload (via `grep`), never your notes — so
-  adding intel, a playbook, or a profile line needs no reinstall and no code change.
+- **Static by design.** The hooks read only the hook payload (via `grep`) — never a note's body
+  or its meaning; intel-cue alone greps note *front-matter* for `glob:` lines, the deterministic
+  filter. Adding intel, a playbook, or a profile line needs no reinstall and no code change.
 - **Hard gates in v1 = the memory-guard, and nothing else.** A genuine "this must never ship" rule
   beyond memory ownership isn't enforced by the pack — capture it as strong intel (the note teaches
   it). A new hard gate is a deliberate future addition, kept rare on purpose: every gate is weight;
