@@ -33,7 +33,9 @@ teaches (user-prompt) and commits (pre-commit); a long, commit-less session that
 still drop an un-prompted inferred note. That's a real limit, not papered over.
 
 This is **opt-in** and runs code (shell), so always get consent before installing. It's **generated
-into the project** (`<project>/.echo/hooks/`), reads nothing but the hook payload, and is
+into the project** (`<project>/.echo/hooks/`), reads nothing but the hook payload — except
+intel-cue, which also reads note front-matter `glob:` lines and its own `/tmp` once-per-session
+markers, never a note's body — and is
 **fail-open** — any hook error does nothing; only the memory-guard's deliberate deny ever blocks.
 
 ---
@@ -182,10 +184,12 @@ The recurring field failure is an agent editing a file whose intel exists but go
 memory blindness at the leaf. This hook closes the deterministic half: on a file-mutating tool
 call it matches the file's path against each intel note's `glob:` front-matter and names the
 matching notes, once per file per session. It reads only `glob:` lines, never a note's body;
-the skill still reads and judges. Globs use shell `case` matching (`**` behaves as `*`, so a
-pattern may over-match slightly — the cue is a nudge, so that costs a line of context, not a
-block). Bash-smuggled edits (a redirect in a script) aren't seen — same documented limit as the
-memory-guard.
+the skill still reads and judges. Globs use shell `case` matching with pathname expansion
+disabled; each pattern is tried both as written (`**` behaving as `*`) and with `**/` deleted
+(so `**/` also matches zero directories, e.g. `**/middleware.ts` cues a root-level
+`middleware.ts`). Matching can still over-match slightly across directory boundaries — the cue
+is a nudge, so that costs a line of context, not a block. Bash-smuggled edits (a redirect in a
+script) aren't seen — same documented limit as the memory-guard.
 
 ```sh
 #!/bin/sh
@@ -202,11 +206,14 @@ for note in "$dir"/.echo/intel/*.md "$dir"/.echo/intel/*/*.md; do
   [ -f "$note" ] || continue
   globs=$(sed -n '1,10p' "$note" | grep '^glob:' | sed 's/^glob:[[:space:]]*//' | tr -d '[]"' | tr ',' ' ')
   [ -n "$globs" ] || continue
+  set -f  # no pathname expansion: $globs are patterns, not files
   for g in $globs; do
+    g0=$(printf '%s' "$g" | sed 's#\*\*/##g')  # "**/" also matches zero directories
     case "$rel" in
-      $g) hits="$hits ${note#"$dir"/}"; break;;
+      $g|$g0) hits="$hits ${note#"$dir"/}"; break;;
     esac
   done
+  set +f
 done
 [ -n "$hits" ] || exit 0
 # once per file per session (fail-open: no session_id -> cue every time)
