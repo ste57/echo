@@ -5,12 +5,13 @@ description: Lightweight project memory for a coding agent. Use when working in 
 
 # Echo
 
-Echo gives you **memory and priors** so you don't start each session blind. Treat it as context to lean on, not rules to satisfy — it informs how you work, it doesn't constrain it.
+Echo gives you **memory and priors** so you don't start each session blind. Treat it as context to lean on, not rules to satisfy — it informs how you work, it doesn't constrain it. The one exception is **authority**: a consent gate in a profile, a playbook whose trigger matches, and the scope the user actually stated are not priors to weigh — they govern, and they are checked at the moment of action, never recalled from memory.
 
-**In an Echo project you do three things:**
+**In an Echo project you do four things:**
 1. **Start oriented** — read your profile + `project.md` at session start. (Nothing loads them for you; the optional reflexes pack — see Setup — reminds you, but the reading is yours.)
 2. **Glance before you touch** — the first time you work in an area this session, whether reading or editing, look at its intel. The look isn't optional; acting on what you find is judgment.
-3. **Capture sparingly** — watch for a real signal (a correction, a teach, a stated preference, a gotcha you just solved) and note it; absent one, do nothing.
+3. **Check before you act** — before anything hard to reverse or that leaves the machine (a push, a merge, a deploy, a delete), stop and check the source: match the request against the playbook triggers, re-read any gate that names the action, and confirm the user asked for *this*. A remembered summary is exactly what goes stale — feeling sure from loaded context is the cue to check, not to skip checking.
+4. **Capture sparingly** — watch for a real signal (a correction, a teach, a stated preference, a gotcha you just solved) and note it; absent one, do nothing.
 
 Memory lives in plain markdown under `.echo/` (and your global profile in `~/.echo/`). It's small on purpose: load a little always, reach for the rest only when relevant.
 
