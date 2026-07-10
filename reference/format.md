@@ -91,7 +91,7 @@ actions unless the path is in the matcher config. Add new protected paths to mid
 | Field | Required | Purpose |
 |-------|----------|---------|
 | `when:` | yes | One line describing the *situation* this note applies to. How a future agent knows to read it. |
-| `glob:` | optional | File patterns the fact bears on. A *relevance hint* you use when reading an area; with the reflexes pack, the intel-cue hook names the note when an edited file matches — content is never injected. |
+| `glob:` | optional | File patterns the fact bears on. A *relevance hint* you use when reading an area — not an auto-trigger (v1 has no injection hook). |
 | `anchor:` | optional | The code this fact depends on (`path` or `path:symbol`). A *staleness probe*: when you read a note whose anchor no longer resolves, don't trust it — verify against current code and offer to update or retire it. |
 
 ### The `when:` line is the craft
@@ -112,8 +112,8 @@ resurface, the note has no reliable trigger — reconsider saving it.
 ❌ when: working on the project      (always true = never useful)
 ```
 
-**Scope `glob:` as tightly as the fact applies.** A glob covering half the repo guides nothing —
-and with the reflexes pack's intel-cue firing on it mechanically, it cries wolf on every edit. **One note, one `when:`** — if you need "and" to
+**Scope `glob:` as tightly as the fact applies.** It's a relevance hint, not a trigger (v1 has no
+auto-injection hook) — a glob covering half the repo guides nothing. **One note, one `when:`** — if you need "and" to
 describe when it fires, it's two notes; split it. **Deterministic path** — name the file from the
 topic, not the moment (`auth.md`, not `auth2.md`), so the same fact learned twice lands at the same
 path and merges cleanly instead of forking.

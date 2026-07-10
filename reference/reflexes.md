@@ -22,15 +22,6 @@ reading, matching, and judging is the skill's job; the hooks only guarantee the 
   A commit is a real "natural stop" with a model turn after it — the dependable capture checkpoint.
 - **user-prompt** → when you say "remember…", cues the Learn pass immediately rather than leaving it
   to the model to notice. The reliable path for an explicit teach.
-- **intel-cue** → before a file-mutating tool call, runs the deterministic glob filter over intel
-  front-matter (`glob:` lines only, never bodies) and names matching notes, once per file per
-  session. A reminder, not an injection: it surfaces paths, never content; relevance stays the
-  skill's judgment.
-- **playbook-cue** → on each user prompt, matches the first word of every playbook trigger phrase
-  (the quoted strings in `when:`) against the prompt and names matching playbooks — so "flush
-  everything on branch" surfaces the flush playbook even when the phrasing isn't verbatim.
-  Deliberately crude: a first-word hit beats agent initiative; the match judgment stays the
-  skill's.
 
 **Honest limit:** no hook can flush *inferred* learnings right before an auto-compaction (the model
 doesn't run between the trigger and the summary). So the dependable capture moments are explicit
@@ -38,9 +29,7 @@ teaches (user-prompt) and commits (pre-commit); a long, commit-less session that
 still drop an un-prompted inferred note. That's a real limit, not papered over.
 
 This is **opt-in** and runs code (shell), so always get consent before installing. It's **generated
-into the project** (`<project>/.echo/hooks/`), reads nothing but the hook payload — except the
-two cue hooks, which also read front-matter trigger lines (intel-cue: `glob:`, plus its own
-`/tmp` once-per-session markers; playbook-cue: `when:`), never a note's body — and is
+into the project** (`<project>/.echo/hooks/`), reads nothing but the hook payload, and is
 **fail-open** — any hook error does nothing; only the memory-guard's deliberate deny ever blocks.
 
 ---
@@ -49,7 +38,7 @@ two cue hooks, which also read front-matter trigger lines (intel-cue: `glob:`, p
 
 When the user opts in:
 
-1. Create `<project>/.echo/hooks/` and write the six `.sh` files below.
+1. Create `<project>/.echo/hooks/` and write the four `.sh` files below.
 2. Wire them into settings (see **Wiring**), **idempotently**: read the existing `hooks` block and
    *append* Echo's entries into each event's array; skip any whose command already contains
    `.echo/hooks/` (so re-install doesn't double-register). Never overwrite a user's hooks. Also add
@@ -183,98 +172,6 @@ exit 0
 
 ---
 
-## playbook-cue — `.echo/hooks/playbook_cue.sh`
-
-The read-side gap that produced the worst field failure: intel gets pushed at the model from three
-directions, but nothing surfaced a playbook at the moment its trigger phrase was spoken — and an
-agent improvised a merge flow past an exactly-matching playbook. This hook closes it with a
-deliberately crude filter: it takes the first word of every quoted trigger phrase in each
-playbook's `when:` line and matches it as a whole word against the user's prompt — so "flush
-everything on branch" fires on `flush` even though the phrasing isn't verbatim. On a hit it names
-the playbook; whether the request truly matches stays the skill's judgment. Over-matching costs a
-line of context; a missed playbook costs an improvised production workflow.
-
-```sh
-#!/bin/sh
-# Echo playbook cue: first-word filter over playbook when: trigger phrases. Names the playbook; never reads bodies, never judges.
-dir="${CLAUDE_PROJECT_DIR:-$PWD}"
-[ -d "$dir/.echo/playbooks" ] || exit 0
-payload=$(cat 2>/dev/null) || exit 0
-norm=$(printf '%s' "$payload" | tr '\n' ' ' | sed 's#\\/#/#g')
-prompt=$(printf '%s' "$norm" | grep -Eo '"prompt"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1)
-[ -n "$prompt" ] || exit 0
-hits=""
-for pb in "$dir"/.echo/playbooks/*.md; do
-  [ -f "$pb" ] || continue
-  whenline=$(sed -n '1,6p' "$pb" | grep '^when:' | head -1)
-  [ -n "$whenline" ] || continue
-  # first word of each quoted trigger phrase, matched as a whole word (>=4 chars, so "it"/"the" never fire)
-  words=$(printf '%s' "$whenline" | grep -o '"[^"]*"' | sed 's/^"//; s/ .*//; s/"$//' | sort -u)
-  for w in $words; do
-    [ ${#w} -ge 4 ] || continue
-    if printf '%s' "$prompt" | grep -Eiq "(^|[^[:alnum:]])$w([^[:alnum:]]|\$)"; then
-      hits="$hits ${pb#"$dir"/}"; break
-    fi
-  done
-done
-[ -n "$hits" ] || exit 0
-printf '{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"Echo: the prompt echoes a playbook trigger —%s. Read it and judge the match before improvising a workflow."}}\n' "$hits"
-exit 0
-```
-
----
-
-## intel-cue — `.echo/hooks/intel_cue.sh`
-
-The recurring field failure is an agent editing a file whose intel exists but goes unread —
-memory blindness at the leaf. This hook closes the deterministic half: on a file-mutating tool
-call it matches the file's path against each intel note's `glob:` front-matter and names the
-matching notes, once per file per session. It reads only `glob:` lines, never a note's body;
-the skill still reads and judges. Globs use shell `case` matching with pathname expansion
-disabled; each pattern is tried both as written (`**` behaving as `*`) and with `**/` deleted
-(so `**/` also matches zero directories, e.g. `**/middleware.ts` cues a root-level
-`middleware.ts`). Matching can still over-match slightly across directory boundaries — the cue
-is a nudge, so that costs a line of context, not a block. Bash-smuggled edits (a redirect in a
-script) aren't seen — same documented limit as the memory-guard.
-
-```sh
-#!/bin/sh
-# Echo intel cue: deterministic glob filter over intel front-matter. Names matching notes; never reads bodies, never judges.
-dir="${CLAUDE_PROJECT_DIR:-$PWD}"
-[ -d "$dir/.echo/intel" ] || exit 0
-payload=$(cat 2>/dev/null) || exit 0
-norm=$(printf '%s' "$payload" | tr '\n' ' ' | sed 's#\\/#/#g')
-file=$(printf '%s' "$norm" | grep -Eo '"(file_path|notebook_path)"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/^.*:[[:space:]]*"//; s/"$//')
-[ -n "$file" ] || exit 0
-rel=${file#"$dir"/}
-hits=""
-for note in "$dir"/.echo/intel/*.md "$dir"/.echo/intel/*/*.md; do
-  [ -f "$note" ] || continue
-  globs=$(sed -n '1,10p' "$note" | grep '^glob:' | sed 's/^glob:[[:space:]]*//' | tr -d '[]"' | tr ',' ' ')
-  [ -n "$globs" ] || continue
-  set -f  # no pathname expansion: $globs are patterns, not files
-  for g in $globs; do
-    g0=$(printf '%s' "$g" | sed 's#\*\*/##g')  # "**/" also matches zero directories
-    case "$rel" in
-      $g|$g0) hits="$hits ${note#"$dir"/}"; break;;
-    esac
-  done
-  set +f
-done
-[ -n "$hits" ] || exit 0
-# once per file per session (fail-open: no session_id -> cue every time)
-sid=$(printf '%s' "$norm" | grep -Eo '"session_id"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/^.*"\([^"]*\)"$/\1/')
-if [ -n "$sid" ]; then
-  mark="/tmp/echo-cue-$(printf '%s' "$sid $rel" | cksum | tr ' \t' '--')"
-  [ -e "$mark" ] && exit 0
-  : > "$mark" 2>/dev/null
-fi
-printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"Echo: intel declares itself relevant to this file —%s. If you have not read it this session, read it before this edit; relevance is yours to judge."}}\n' "$hits"
-exit 0
-```
-
----
-
 ## Wiring — settings.json
 
 Append into `.claude/settings.json` (team) or `.claude/settings.local.json` (personal). The
@@ -291,17 +188,13 @@ Append into `.claude/settings.json` (team) or `.claude/settings.local.json` (per
     ],
     "UserPromptSubmit": [
       { "hooks": [ { "type": "command",
-        "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/user_prompt.sh\"" },
-        { "type": "command",
-        "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/playbook_cue.sh\"" } ] }
+        "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/user_prompt.sh\"" } ] }
     ],
     "PreToolUse": [
       { "matcher": ".*", "hooks": [ { "type": "command",
         "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/memory_guard.sh\"" } ] },
       { "matcher": "Bash", "hooks": [ { "type": "command",
-        "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/pre_commit.sh\"" } ] },
-      { "matcher": "Edit|Write|MultiEdit|NotebookEdit", "hooks": [ { "type": "command",
-        "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/intel_cue.sh\"" } ] }
+        "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/pre_commit.sh\"" } ] }
     ]
   }
 }
@@ -322,10 +215,8 @@ reliable path; PostCompact is a redundant safety net, not the primary mechanism.
 - **Cue ≠ obey, inject ≠ enforce.** Every hook here only puts a short instruction in front of you; it
   doesn't act. The skill does the work. The single exception is **memory-guard**, which actually
   denies — the one thing Echo enforces rather than asks.
-- **Static by design.** The hooks read only the hook payload (via `grep`) — never a note's body
-  or its meaning; the two cue hooks alone grep *front-matter* (intel-cue: `glob:` lines,
-  playbook-cue: `when:` trigger phrases), the deterministic filter. Adding intel, a playbook, or
-  a profile line needs no reinstall and no code change.
+- **Static by design.** The hooks read only the hook payload (via `grep`), never your notes — so
+  adding intel, a playbook, or a profile line needs no reinstall and no code change.
 - **Hard gates in v1 = the memory-guard, and nothing else.** A genuine "this must never ship" rule
   beyond memory ownership isn't enforced by the pack — capture it as strong intel (the note teaches
   it). A new hard gate is a deliberate future addition, kept rare on purpose: every gate is weight;
