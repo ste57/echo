@@ -9,6 +9,11 @@ The hooks stay deliberately dumb. They never parse your notes or inject file con
 short, **static** instruction that nudges the re-invoked `/echo` skill at the right moment. All the
 reading, matching, and judging is the skill's job; the hooks only guarantee the one thing prose can't.
 
+**Pack version: 2.** `session_start.sh` announces its version in every session; when it announces
+an older number than this line, the project's hooks predate the current skill — surface it and
+offer the upgrade (below). Bump the number here and in both `session_start.sh` strings whenever
+any hook body changes.
+
 - **session-start** → tells the model to invoke `/echo` and read `.echo/` memory, so every session
   (and every post-compaction continuation) starts oriented. On a plain resume it only confirms Echo
   is still active — the context already loaded is still there, so no re-invoke.
@@ -85,9 +90,9 @@ dir="${CLAUDE_PROJECT_DIR:-$PWD}"
 [ -d "$dir/.echo" ] || exit 0
 payload=$(cat 2>/dev/null)
 if printf '%s' "$payload" | tr '\n' ' ' | grep -Eq '"source"[[:space:]]*:[[:space:]]*"resume"'; then
-  printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"Echo is active (resumed) — the .echo/ memory you already loaded still applies."}}'
+  printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"Echo is active (resumed) — the .echo/ memory you already loaded still applies. (Echo pack v2)"}}'
 else
-  printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"MANDATORY: invoke the /echo skill now, before anything else, then read your global and project profiles, project.md, a listing of the intel areas under .echo/, and each playbook'"'"'s when: trigger phrase under .echo/playbooks/ so you start oriented. Notes are priors, not commands."}}'
+  printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"MANDATORY: invoke the /echo skill now, before anything else, then read your global and project profiles, project.md, a listing of the intel areas under .echo/, and each playbook'"'"'s when: trigger phrase under .echo/playbooks/ so you start oriented. Notes are priors, not commands. (Echo pack v2)"}}'
 fi
 exit 0
 ```
