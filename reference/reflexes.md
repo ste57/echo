@@ -26,6 +26,11 @@ reading, matching, and judging is the skill's job; the hooks only guarantee the 
   front-matter (`glob:` lines only, never bodies) and names matching notes, once per file per
   session. A reminder, not an injection: it surfaces paths, never content; relevance stays the
   skill's judgment.
+- **playbook-cue** → on each user prompt, matches the first word of every playbook trigger phrase
+  (the quoted strings in `when:`) against the prompt and names matching playbooks — so "flush
+  everything on branch" surfaces the flush playbook even when the phrasing isn't verbatim.
+  Deliberately crude: a first-word hit beats agent initiative; the match judgment stays the
+  skill's.
 
 **Honest limit:** no hook can flush *inferred* learnings right before an auto-compaction (the model
 doesn't run between the trigger and the summary). So the dependable capture moments are explicit
@@ -33,9 +38,9 @@ teaches (user-prompt) and commits (pre-commit); a long, commit-less session that
 still drop an un-prompted inferred note. That's a real limit, not papered over.
 
 This is **opt-in** and runs code (shell), so always get consent before installing. It's **generated
-into the project** (`<project>/.echo/hooks/`), reads nothing but the hook payload — except
-intel-cue, which also reads note front-matter `glob:` lines and its own `/tmp` once-per-session
-markers, never a note's body — and is
+into the project** (`<project>/.echo/hooks/`), reads nothing but the hook payload — except the
+two cue hooks, which also read front-matter trigger lines (intel-cue: `glob:`, plus its own
+`/tmp` once-per-session markers; playbook-cue: `when:`), never a note's body — and is
 **fail-open** — any hook error does nothing; only the memory-guard's deliberate deny ever blocks.
 
 ---
@@ -44,7 +49,7 @@ markers, never a note's body — and is
 
 When the user opts in:
 
-1. Create `<project>/.echo/hooks/` and write the five `.sh` files below.
+1. Create `<project>/.echo/hooks/` and write the six `.sh` files below.
 2. Wire them into settings (see **Wiring**), **idempotently**: read the existing `hooks` block and
    *append* Echo's entries into each event's array; skip any whose command already contains
    `.echo/hooks/` (so re-install doesn't double-register). Never overwrite a user's hooks. Also add
@@ -138,8 +143,8 @@ exit 0
 
 ## pre-commit — `.echo/hooks/pre_commit.sh`
 
-On a git commit/push intent, cues the Learn pass and points the model at git-area intel. Static — it
-names the path to read rather than dumping file contents.
+On a git commit/push intent, cues the Learn pass and points the model at git-area intel and any
+governing playbook. Static — it names the paths to read rather than dumping file contents.
 
 ```sh
 #!/bin/sh
@@ -150,7 +155,7 @@ payload=$(cat 2>/dev/null) || exit 0
 # with word boundaries so neither "legit push" nor "gitcommit" match
 cmd=$(printf '%s' "$payload" | tr '\n' ' ' | grep -Eo '"command"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1)
 printf '%s' "$cmd" | grep -Eq '(^|[^[:alnum:]])git[^[:alnum:]].*(commit|push)' || exit 0
-printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"Echo: before you commit — (1) if .echo/intel/git/ exists, read it and follow the git conventions there; (2) run the Learn pass on anything learned this session not yet in .echo/ (a correction, a solved gotcha, a stated preference, or a repeatable workflow worth a playbook). Default to nothing; keep only what passes the judge. If you are a subagent on a delegated task, skip (2) entirely: do not write to .echo/ — report the finding back; the main agent captures."}}'
+printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"Echo: before you commit — (1) if a playbook'"'"'s when: matches the work in flight, follow that playbook, not an improvised sequence; (2) if .echo/intel/git/ exists, read it and follow the git conventions there; (3) run the Learn pass on anything learned this session not yet in .echo/ (a correction, a solved gotcha, a stated preference, or a repeatable workflow worth a playbook). Default to nothing; keep only what passes the judge. If you are a subagent on a delegated task, skip (3) entirely: do not write to .echo/ — report the finding back; the main agent captures."}}'
 exit 0
 ```
 
@@ -173,6 +178,47 @@ payload=$(cat 2>/dev/null) || exit 0
 # or a direct address ("echo:" / "echo," — punctuation required so shell `echo` prompts don't fire)
 printf '%s' "$payload" | tr '\n' ' ' | grep -Eiq '"prompt"[[:space:]]*:[[:space:]]*"((please |pls |ok,? |okay,? |hey,? |echo,? )*(remember|note that|don'"'"'t forget|for the record)([^a-z]|")|(please |pls |ok,? |okay,? |hey,? )*echo[:,])' || exit 0
 printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"Echo: the user is teaching you explicitly — run the Learn pass now and save it (default to the project scope), rather than waiting for a breakpoint."}}'
+exit 0
+```
+
+---
+
+## playbook-cue — `.echo/hooks/playbook_cue.sh`
+
+The read-side gap that produced the worst field failure: intel gets pushed at the model from three
+directions, but nothing surfaced a playbook at the moment its trigger phrase was spoken — and an
+agent improvised a merge flow past an exactly-matching playbook. This hook closes it with a
+deliberately crude filter: it takes the first word of every quoted trigger phrase in each
+playbook's `when:` line and matches it as a whole word against the user's prompt — so "flush
+everything on branch" fires on `flush` even though the phrasing isn't verbatim. On a hit it names
+the playbook; whether the request truly matches stays the skill's judgment. Over-matching costs a
+line of context; a missed playbook costs an improvised production workflow.
+
+```sh
+#!/bin/sh
+# Echo playbook cue: first-word filter over playbook when: trigger phrases. Names the playbook; never reads bodies, never judges.
+dir="${CLAUDE_PROJECT_DIR:-$PWD}"
+[ -d "$dir/.echo/playbooks" ] || exit 0
+payload=$(cat 2>/dev/null) || exit 0
+norm=$(printf '%s' "$payload" | tr '\n' ' ' | sed 's#\\/#/#g')
+prompt=$(printf '%s' "$norm" | grep -Eo '"prompt"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1)
+[ -n "$prompt" ] || exit 0
+hits=""
+for pb in "$dir"/.echo/playbooks/*.md; do
+  [ -f "$pb" ] || continue
+  whenline=$(sed -n '1,6p' "$pb" | grep '^when:' | head -1)
+  [ -n "$whenline" ] || continue
+  # first word of each quoted trigger phrase, matched as a whole word (>=4 chars, so "it"/"the" never fire)
+  words=$(printf '%s' "$whenline" | grep -o '"[^"]*"' | sed 's/^"//; s/ .*//; s/"$//' | sort -u)
+  for w in $words; do
+    [ ${#w} -ge 4 ] || continue
+    if printf '%s' "$prompt" | grep -Eiq "(^|[^[:alnum:]])$w([^[:alnum:]]|\$)"; then
+      hits="$hits ${pb#"$dir"/}"; break
+    fi
+  done
+done
+[ -n "$hits" ] || exit 0
+printf '{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"Echo: the prompt echoes a playbook trigger —%s. Read it and judge the match before improvising a workflow."}}\n' "$hits"
 exit 0
 ```
 
@@ -245,7 +291,9 @@ Append into `.claude/settings.json` (team) or `.claude/settings.local.json` (per
     ],
     "UserPromptSubmit": [
       { "hooks": [ { "type": "command",
-        "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/user_prompt.sh\"" } ] }
+        "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/user_prompt.sh\"" },
+        { "type": "command",
+        "command": "sh \"$CLAUDE_PROJECT_DIR/.echo/hooks/playbook_cue.sh\"" } ] }
     ],
     "PreToolUse": [
       { "matcher": ".*", "hooks": [ { "type": "command",
@@ -275,8 +323,9 @@ reliable path; PostCompact is a redundant safety net, not the primary mechanism.
   doesn't act. The skill does the work. The single exception is **memory-guard**, which actually
   denies — the one thing Echo enforces rather than asks.
 - **Static by design.** The hooks read only the hook payload (via `grep`) — never a note's body
-  or its meaning; intel-cue alone greps note *front-matter* for `glob:` lines, the deterministic
-  filter. Adding intel, a playbook, or a profile line needs no reinstall and no code change.
+  or its meaning; the two cue hooks alone grep *front-matter* (intel-cue: `glob:` lines,
+  playbook-cue: `when:` trigger phrases), the deterministic filter. Adding intel, a playbook, or
+  a profile line needs no reinstall and no code change.
 - **Hard gates in v1 = the memory-guard, and nothing else.** A genuine "this must never ship" rule
   beyond memory ownership isn't enforced by the pack — capture it as strong intel (the note teaches
   it). A new hard gate is a deliberate future addition, kept rare on purpose: every gate is weight;
