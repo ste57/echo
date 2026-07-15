@@ -12,13 +12,14 @@ Write this into the project's root `CLAUDE.md` (create it if absent; if it exist
 
 ```markdown
 <!-- echo:begin — managed by Echo, a pointer to memory, not memory itself -->
-## This project runs on Echo — read `.echo/` before you start
+## Before ANY task here: read `.echo/` — this project's real conventions live there, not in the code
 
-The conventions that decide whether you get this right — the stack, the deploy
-steps, the traps that will bite you — live in `.echo/`, not in the code. The
-code alone will mislead you, so trust `.echo/` over your own defaults and don't
-guess what it says. Before you start the task, read `.echo/project.md` and any
-relevant `.echo/intel/` notes; they're plain markdown, no tools required.
+This project runs on Echo. Its actual stack, deploy steps, and gotchas are in
+`.echo/`, and they are **not what you'd guess** — the deploy branch, the package
+manager, and other defaults here are probably different from what you'd assume,
+and the code alone will mislead you. So before you start, read `.echo/project.md`
+and any relevant `.echo/intel/` notes (plain markdown, no tools needed) and let
+them override your defaults.
 
 If the `echo` skill is installed, run `/echo` and it loads them for you. If not,
 install it — `Install https://github.com/ste57/echo as a skill` — or just read
