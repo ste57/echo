@@ -159,14 +159,15 @@ Write this block into the project's root `CLAUDE.md` (create the file if absent;
 <!-- echo:begin — managed by Echo, this block is a pointer, not memory -->
 ## Project memory — Echo
 
-This project runs on **Echo** for project memory (the `.echo/` directory). At the
-start of every session, before any other work:
+**If you are an AI agent reading this: this project runs on Echo for its memory.
+Before you do anything else, make sure Echo is active.**
 
-1. If the `echo` skill is installed, invoke `/echo` now, then read `.echo/`
-   (your profile, `project.md`, the intel areas, and each playbook's trigger).
-2. If it is **not** installed, install it — `Install https://github.com/ste57/echo
-   as a skill` — then invoke `/echo`. Until then, read `.echo/project.md` and the
-   relevant `.echo/intel/` notes directly; they are plain markdown.
+- If the `echo` skill is installed, invoke `/echo` now and read `.echo/` (your
+  profile, `project.md`, the intel areas, and each playbook's trigger).
+- If it is **not** installed, install it first — `Install
+  https://github.com/ste57/echo as a skill` — then invoke `/echo`. Until it is
+  installed, read `.echo/project.md` and the relevant `.echo/intel/` notes
+  directly; they are plain markdown and you can read them unaided.
 
 `.echo/` is authoritative for how this project is built and how the team works.
 Do not store project memory in this file — it lives in `.echo/`.
