@@ -38,7 +38,7 @@ Five kinds of file (profiles come in two scopes). Which one a fact belongs in is
 
 Most facts have one obvious home; on a boundary case, use the two questions. Profiles never collide (separate per-person files). Shared files (`project.md`, intel) *can* still conflict at git-merge time, but small single-topic notes keep any conflict to a few lines. When a shared file *does* clash — a teammate wrote the same leaf, or git left a merge conflict — never accept last-writer-wins: check the note's history (`git blame`; during a live merge conflict, `git log --merge -p -- <note>` shows both sides) to see who wrote what and when, surface both versions to the user, and let them choose or merge. (Two *live* sessions on the same machine can also race the same note — last save wins, and v1 doesn't lock; an accepted, rare, small loss.)
 
-**Echo is the memory — use it, not the model's built-in memory.** Everything you learn goes in `.echo/`, never in `CLAUDE.md`, scratch files, or session memory — and "learn" includes process rules and standing instructions for future sessions (those are intel or a playbook; in an Echo project you edit `CLAUDE.md` only on an explicit ask). Echo *replaces* those for what you remember: one store, inspectable, shared, and versioned. If a project *already* has memory-like content in a `CLAUDE.md`, don't migrate it silently — note the overlap once and offer to move it into `.echo/`; treat `.echo/` as authoritative meanwhile. With the reflexes pack installed (optional shell hooks — see Setup and `reference/reflexes.md`) the built-in-store half of this is enforced, not just asked: access to the runtime's built-in memory store — reads as well as writes — is denied (`CLAUDE.md` and scratch files stay covered by this rule, not by a gate). That's the pack's one hard gate — the **memory-guard**.
+**Echo is the memory — use it, not the model's built-in memory.** Everything you learn goes in `.echo/`, never in `CLAUDE.md`, scratch files, or session memory — and "learn" includes process rules and standing instructions for future sessions (those are intel or a playbook; in an Echo project you edit `CLAUDE.md` only on an explicit ask). The **one** standing exception is the **Echo activation block** written into `CLAUDE.md` at setup (see "Setting up Echo in a project"): it's a fenced pointer that *boots* Echo for every session, not memory — no learning, no facts, just the instruction to load `.echo/`. Memory itself still never lands in `CLAUDE.md`. Echo *replaces* those for what you remember: one store, inspectable, shared, and versioned. If a project *already* has memory-like content in a `CLAUDE.md`, don't migrate it silently — note the overlap once and offer to move it into `.echo/`; treat `.echo/` as authoritative meanwhile. With the reflexes pack installed (optional shell hooks — see Setup and `reference/reflexes.md`) the built-in-store half of this is enforced, not just asked: access to the runtime's built-in memory store — reads as well as writes — is denied (`CLAUDE.md` and scratch files stay covered by this rule, not by a gate). That's the pack's one hard gate — the **memory-guard**.
 
 ---
 
@@ -146,11 +146,38 @@ If there's no `.echo/` yet and the user wants it here:
 1. **Ask first**, then create `.echo/project.md`, `.echo/profiles/`, `.echo/intel/`, `.echo/playbooks/`.
 2. Seed `project.md` from what you can see (README, structure, stack) — draft it, let the user correct it. Scan for and strip anything secret-shaped before writing.
 3. Create their profile in `.echo/profiles/` — a friendly filename with an `email:` front-matter key for matching (format in `reference/format.md`).
-4. Commit all of `.echo/` so the team shares it — including project profiles (per-person files don't collide). Only the global `~/.echo/profile.md` stays out of any repo. (No git? Skip this step — single-user mode, below.)
+4. **Write the activation block into `CLAUDE.md`** (see "The activation block" below) so Echo boots for *every* teammate, not just those who installed the skill. This is the one time Echo touches `CLAUDE.md` — a pointer, never memory.
+5. Commit all of `.echo/` **and the `CLAUDE.md` change** so the team shares it — including project profiles (per-person files don't collide). Only the global `~/.echo/profile.md` stays out of any repo. (No git? Skip this step — single-user mode, below.)
+
+### The activation block
+
+The reflexes pack and the committed hook wiring only reach a teammate who has already installed Echo — a hook pointed at a missing skill path fails open and does nothing. `CLAUDE.md` is different: Claude Code auto-loads it for **every** session and **every** user, with no skill install and no hook-consent prompt. So a small activation block committed there is the one lever a repo has to boot Echo for the whole team — the closest thing to "a project *requires* Echo" that actually reaches everyone.
+
+Write this block into the project's root `CLAUDE.md` (create the file if absent; if it exists, insert the block near the top). Keep it fenced by the `echo:begin`/`echo:end` markers so re-running setup replaces it in place rather than duplicating, and uninstall can remove exactly it:
+
+```markdown
+<!-- echo:begin — managed by Echo, this block is a pointer, not memory -->
+## Project memory — Echo
+
+This project runs on **Echo** for project memory (the `.echo/` directory). At the
+start of every session, before any other work:
+
+1. If the `echo` skill is installed, invoke `/echo` now, then read `.echo/`
+   (your profile, `project.md`, the intel areas, and each playbook's trigger).
+2. If it is **not** installed, install it — `Install https://github.com/ste57/echo
+   as a skill` — then invoke `/echo`. Until then, read `.echo/project.md` and the
+   relevant `.echo/intel/` notes directly; they are plain markdown.
+
+`.echo/` is authoritative for how this project is built and how the team works.
+Do not store project memory in this file — it lives in `.echo/`.
+<!-- echo:end -->
+```
+
+**What this does and doesn't do.** It boots Echo for anyone with the skill (no per-project hook wiring needed) and, for anyone without it, both instructs the install *and* points them at `.echo/` — plain markdown any agent can read unaided, so memory still reaches them. What it **cannot** do is install the skill onto a teammate's machine; nothing committed to a repo can. The block is the strongest reach a project has, not a guarantee. Removing the block (and, if wired, the reflexes hooks) fully backs Echo out; the `.echo/` memory is untouched by either.
 
 The global `~/.echo/profile.md` isn't part of project setup — it's per-machine, created lazily the first time a preference is promoted to global; its absence just means no global priors yet. **Echo assumes git in v1** (identity from `git config user.email`, sharing via commit) — any git host or a purely local repo; nothing assumes GitHub or a specific forge. With no git at all it still works as single-user local memory — one profile, no team sharing. Migrating an existing **squad** setup (a `.squad/` directory — Echo's predecessor system) is out of scope for v1: there's no importer — offer to port still-true facts into `.echo/` by hand, never silently.
 
-**Optional reflexes pack:** Echo works as-is but leans on you to remember to consult and capture. To make it more reliable, follow [`reference/reflexes.md`](reference/reflexes.md) — small **shell** hooks (no Python, no interpreter to install) that re-invoke `/echo` at session start and after a compaction so you reload memory, **deny access to the runtime's built-in memory store** (Echo owns memory — the one hard gate), cue the Learn pass on an explicit "remember…" or "echo: …" and before each commit or push. They stay dumb: static nudges, no parsing of your notes — the skill does the reading and judging. The scripts live in the installed skill (`hooks/` — one copy serves every project; updating the skill updates them all); a project carries only the settings wiring, and everything is fail-open (a broken hook never blocks edits). Opt-in — always asks before wiring anything that runs code.
+**Optional reflexes pack:** Echo works as-is but leans on you to remember to consult and capture. The activation block above already boots Echo at session start for everyone (it's prose Claude Code always loads); the reflexes pack is a *sharper, opt-in* layer on top for those who install it — it adds the one hard gate (memory ownership) and cues at compaction, commit, and push that prose can't guarantee. To add it, follow [`reference/reflexes.md`](reference/reflexes.md) — small **shell** hooks (no Python, no interpreter to install) that re-invoke `/echo` at session start and after a compaction so you reload memory, **deny access to the runtime's built-in memory store** (Echo owns memory — the one hard gate), cue the Learn pass on an explicit "remember…" or "echo: …" and before each commit or push. They stay dumb: static nudges, no parsing of your notes — the skill does the reading and judging. The scripts live in the installed skill (`hooks/` — one copy serves every project; updating the skill updates them all); a project carries only the settings wiring, and everything is fail-open (a broken hook never blocks edits). Opt-in — always asks before wiring anything that runs code.
 
 **If `.echo/` is incomplete or broken,** degrade gracefully: no `.echo/` → you just have no memory (offer setup, don't nag); a missing file → absent context, not an error; a note with malformed front-matter → mention it once (*"intel/api/auth.md has no `when:` — it won't surface on its own"*) rather than silently relying on it.
 
