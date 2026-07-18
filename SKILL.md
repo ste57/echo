@@ -22,7 +22,7 @@ Memory lives in plain markdown under `.echo/` (and your global profile in `~/.ec
 Five kinds of file (profiles come in two scopes). Which one a fact belongs in is settled by two questions:
 
 1. **About the developer, or the project?** About you → a **profile**. About the project → `project.md` or intel.
-2. **(If about the project) identity or a discovered fact?** What the project *is* and won't change session-to-session → **`project.md`** — including a standing fact every session must know at start (as a pointer line to its full note; that's the always-on tier). Something you *discovered* by working — a convention, trap, or quirk → **intel**.
+2. **(If about the project) identity or a discovered fact?** What the project *is* and won't change session-to-session → **`project.md`** — including a standing fact every session must know at start, as a pointer line to its full note; that's the always-on tier. Anything that runs on a schedule (a freshness stamp, a periodic refresh, a recurring check) belongs there: time is never a situation a `when:` can catch, so a session only knows something is due if the schedule is visible at start. Something you *discovered* by working — a convention, trap, or quirk → **intel**.
 
 | File | Holds | You read it |
 |------|-------|--------|
