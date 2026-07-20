@@ -24,5 +24,5 @@ Nothing to memorize — you just talk:
 ```
 
 <p align="center">
-  <sub>Built for Claude Code.</sub>
+  <sub>Built for Claude Code. Works on Codex and any agent that reads <code>AGENTS.md</code> — the memory is plain markdown.</sub>
 </p>

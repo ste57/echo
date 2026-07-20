@@ -95,7 +95,7 @@ truth waiting to drift). Behavioral notes that matter:
   formatting, and won't deny a legitimate project file under some *other* `.claude/…/memory/`-like
   path. Subagent context is identified by the `transcript_path` *field* living under
   `…/subagents/`; the subagent deny fires only for write tools (Write/Edit/MultiEdit/NotebookEdit)
-  into `.echo/`. It does **not** touch `CLAUDE.md` or scratch files (legit files; prose covers
+  into `.echo/`. It does **not** touch `CLAUDE.md`/`AGENTS.md` or scratch files (legit files; prose covers
   those), and it can't see access smuggled through raw `Bash` — rare; the harness uses the file
   tools. Fail-open: anything it can't clearly identify is allowed.
 - **pre-commit** scopes its match to the `command` value with word boundaries (neither "legit push"
