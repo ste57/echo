@@ -105,16 +105,25 @@ resurface, the note has no reliable trigger — reconsider saving it.
 
 ```
 ✅ when: writing color or styling code (any view)
-✅ when: adding or removing a source file (build needs regenerating)
+✅ when: running the codegen/build command, or adding/removing a source file
 ✅ when: handling money amounts or currency conversion
 ❌ when: the date test failed       (a past symptom, not a future moment)
 ❌ when: the components folder      (a folder, not a moment)
 ❌ when: working on the project      (always true = never useful)
 ```
 
+**Name the command, not only the situation that taught you.** If the fact fires when a specific
+command or tool is run — a build, a codegen, a deploy — put that command *in* the `when:`. The
+moment someone types the command by name is a distinct trigger from the change that led you to
+write the note, and short obvious-looking commands are exactly where the memory glance gets
+skipped: a note triggered only on "adding a source file" won't surface for a bare "run the build."
+This is *not* the one-situation-per-note split below — that's for two *different* facts; this is
+one moment given a second handle, so a reader arriving from either side matches it.
+
 **Scope `glob:` as tightly as the fact applies.** It's a relevance hint, not a trigger (v1 has no
-auto-injection hook) — a glob covering half the repo guides nothing. **One note, one `when:`** — if you need "and" to
-describe when it fires, it's two notes; split it. **Deterministic path** — name the file from the
+auto-injection hook) — a glob covering half the repo guides nothing. **One note, one situation** — if
+you need "and" to join two *different* situations, it's two notes; split it (several triggers for the
+*same* moment, like a command and the change that requires it, stay one note — see above). **Deterministic path** — name the file from the
 topic, not the moment (`auth.md`, not `auth2.md`), so the same fact learned twice lands at the same
 path and merges cleanly instead of forking.
 
