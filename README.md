@@ -22,7 +22,3 @@ Nothing to memorize — you just talk:
 ```
 "echo: we deploy from the release branch, not main"
 ```
-
-<p align="center">
-  <sub>Built for Claude Code. Works on Codex and any agent that reads <code>AGENTS.md</code> — the memory is plain markdown.</sub>
-</p>
