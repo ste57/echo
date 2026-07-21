@@ -60,9 +60,25 @@ profile**, not intel, because it's about you, not the project. Save it, tell the
 The boundary is *whose fact it is*: "we always squash-merge" sounds like a preference but is
 project-true — that's intel, never a profile line.
 
-If it's clearly an identity-level habit true *everywhere* ("I never add co-author lines"), offer —
-once, non-blocking — to also add it to your **global** profile. Save it project-scoped regardless; it
-reaches global only on a yes.
+**Which profile — global or project?** Route by the preference's *subject*, and give it exactly one home:
+- **About you *everywhere*** — communication style, commit/code etiquette, tooling taste ("I never add
+  co-author lines", "terse replies", "functional style") → your **global** `~/.echo/profile.md`. These
+  categories are identity *by definition*; they are never "unsure," and they never belong in a committed
+  project profile (that publishes your personal style into a team repo *and* seeds a copy that
+  re-duplicates in the next repo — the failure that quadruplicated "no co-author lines" across four files).
+- **Only makes sense in *this* repo** ("3-bullet PRs here", "the build tool is `tuist`") → the **project** profile.
+- **Genuinely torn, and it has a plausible project hook** → project (committed, visible, recoverable;
+  move it up to global later if it proves universal). A preference with *no* project hook is identity — route global.
+- **Mixed** — an everywhere principle around a here-specific instantiation ("verify by reading, don't
+  build unless asked" + "here the build is `xcodebuild`") → **split it**: principle to global, instantiation to project.
+
+**One home per preference.** Never save it project-scoped *and* copy it to global — the project profile
+inherits global, so a duplicate is pure redundancy and a drift seed (committed profiles even fork per git
+branch). Promoting an existing project line to global is therefore a **move**: write global, delete the
+now-redundant project line — *unless* that line intentionally **overrides** a different global value, in
+which case it's not a duplicate and stays. Global is per-machine and uncommitted (it doesn't ride along in
+a clone), so sync `~/.echo` yourself like a dotfile for cross-machine identity; that limit is never a
+reason to route identity habits into committed repos.
 
 ---
 
