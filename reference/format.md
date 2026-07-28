@@ -40,7 +40,8 @@ email: alex.kim@acme.io
 ```
 
 **Finding yours:** list `.echo/profiles/`, match each file's `email:` line against your
-`git config user.email` (case-insensitive). No match → you're new here. A profile missing its
+`git config user.email` (case-insensitive). No match → you're new here: create your profile as
+part of orientation (filename from the email's local part, `email:` front-matter, empty body). A profile missing its
 `email:` line can't be matched — flag it once. **Names must be unique** — if the name you want is
 taken, qualify it (`alex-k.md`); two developers never share a file.
 (If `git config user.email` is unset, ask the user how to identify their profile. Non-interactive
