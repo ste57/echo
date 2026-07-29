@@ -17,7 +17,10 @@ fails open and does nothing.
 
 - **session-start** → tells the model to invoke `/echo` and read `.echo/` memory, so every session
   (and every post-compaction continuation) starts oriented. On a plain resume it only confirms Echo
-  is still active — the context already loaded is still there, so no re-invoke.
+  is still active — the context already loaded is still there, so no re-invoke. In a repo that
+  *embeds* the skill (a committed `.claude/skills/echo/`), it points the session at that copy by
+  file path instead of the `/echo` name — a personal install can shadow a skill name, but it can't
+  shadow a file read.
 - **memory-guard** → the one **hard gate**, two denies: (a) any access (read or write — it's wired
   to all tools) to the runtime's built-in memory store (`~/.claude/projects/…/memory/`) — Echo owns
   memory; the store is stale and invisible to the team; (b) a **subagent** writing into `.echo/` —
@@ -139,10 +142,10 @@ Append into each event's existing array; don't replace it. Skip any entry whose 
 contains `skills/echo/hooks/` (idempotent re-install). If the skill is installed somewhere other
 than `~/.claude/skills/echo`, point the commands there.
 
-Optionally also wire `session_start.sh` under **PostCompact** as belt-and-suspenders. In current
-Claude Code, `SessionStart` already fires with `source: compact` after a compaction (so the hook
-above covers it), and `PostCompact` stdout may reach only the debug log — so SessionStart is the
-reliable path; PostCompact is a redundant safety net, not the primary mechanism.
+Do **not** wire `session_start.sh` under **PostCompact**: its stdout never reaches the model there
+— in current Claude Code it surfaces to the *user* as a raw status line after every compaction,
+noise with no effect. `SessionStart` already fires with `source: compact` after a compaction, so
+the wiring above covers re-orientation on its own; remove any legacy PostCompact entry.
 
 ---
 
