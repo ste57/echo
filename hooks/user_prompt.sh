@@ -1,4 +1,5 @@
 #!/bin/sh
+LC_ALL=C; export LC_ALL   # byte semantics: BSD tr/sed/grep abort on invalid UTF-8 in a payload
 dir="${CLAUDE_PROJECT_DIR:-$PWD}"
 [ -d "$dir/.echo" ] || exit 0
 payload=$(cat 2>/dev/null) || exit 0

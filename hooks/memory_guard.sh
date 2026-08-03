@@ -1,4 +1,6 @@
 #!/bin/sh
+LC_ALL=C; export LC_ALL   # byte semantics: BSD tr/sed/grep abort on invalid UTF-8, and an abort
+                          # mid-pipeline truncates the payload before the deny is ever tested
 # Echo owns memory: deny access (read or write) to the runtime built-in memory store (~/.claude/projects/.../memory/).
 payload=$(cat 2>/dev/null) || exit 0
 # flatten newlines and un-escape JSON solidus (\/ -> /) so neither can evade the match
