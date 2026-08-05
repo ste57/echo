@@ -19,7 +19,7 @@ Echo is project memory: plain markdown in the repo carrying the team's priors �
 | `.echo/intel/<area>/<note>.md` | A discovered fact or gotcha, scoped by `when:` | when relevant |
 | `.echo/playbooks/<name>.md` | A named workflow, run on request | on mention |
 
-Which file a fact belongs in is settled by two questions: **about the developer or the project?** (you → a profile; the project → `project.md` or intel) — and if the project, **identity or discovery?** (what it *is* → `project.md`; what working here *taught you* → intel). The project profile is matched to you by its `email:` front-matter against `git config user.email` and inherits the global one. On a boundary case, ask **who the line binds**: a rule any teammate's session must follow is project-true however personal its origin; a profile line binds only how you work *with this person*. Full routing rules: `base/routing.md`.
+Which file a fact belongs in is settled by two questions: **about the developer or the project?** (you → a profile; the project → `project.md` or intel) — and if the project, **identity or discovery?** (what it *is* → `project.md`; what working here *taught you* → intel). One carve-out: a standing fact every session must know at start, or anything that runs on a **schedule**, goes in `project.md` as a pointer line — time is never a situation a `when:` can catch, so a session only knows something is due if the schedule is visible at start. The project profile is matched to you by its `email:` front-matter against `git config user.email` and inherits the global one. On a boundary case, ask **who the line binds**: a rule any teammate's session must follow is project-true however personal its origin; a profile line binds only how you work *with this person*. Full routing rules: `base/routing.md`.
 
 **Echo is the memory — use it, not the model's built-in store.** Everything you learn goes in `.echo/`, never in `CLAUDE.md`, `AGENTS.md`, scratch files, or session memory — and "learn" includes process rules and standing instructions (those are intel or a playbook; boot files are edited only on an explicit ask, and the fenced **activation block** written at setup is the one standing exception: a pointer that boots Echo, never memory). Existing memory-like content in a boot file isn't migrated silently — note the overlap once, offer the move, treat `.echo/` as authoritative meanwhile. With the reflexes pack installed this is enforced: the **memory-guard** denies all access to the runtime's built-in memory store.
 
@@ -30,6 +30,8 @@ Which file a fact belongs in is settled by two questions: **about the developer 
 A ritual, not a judgment call. It runs at session start before the first action; it runs again **in full immediately after any compaction**; and if you ever catch yourself mid-session unoriented, it runs then. No task is too narrow, quick, read-only, or non-code to skip it — you can't judge whether orientation matters without orienting, and the read is cheap where being wrong isn't.
 
 The ritual: (1) read `~/.echo/profile.md` if present; (2) find your project profile — the file in `.echo/profiles/` whose `email:` matches your `git config user.email` — and **if it doesn't exist, create it now** (friendly filename from the email's local part, `email:` front-matter, body empty until Capture fills it), then read it; (3) read `.echo/project.md`; (4) list `.echo/intel/` and glance each area's `when:` lines; (5) glance every playbook's `when:` phrase. A profile whose email isn't yours is another person's: never load it or apply its preferences.
+
+**Reading includes weighing.** The always-on files have a budget of roughly a screenful (~30 lines) each; you're reading them anyway, so notice when one has grown past it — bloat that accretes across sessions surfaces nowhere else — flag it and offer the trim pass (`base/maintenance.md`).
 
 **Reading produces the trigger sheet.** The `when:` lines you just saw — intel notes, playbook phrases, and the `base/` moments below — are not a formality; they are your session's **watchlist**. Orientation isn't done until you're holding it: *these are the moments this project wants me to watch for*. Retrieve consults that sheet, not your general sense of relevance.
 
@@ -78,7 +80,7 @@ The easy failure is capturing too much — notes nobody reads, drowning the ones
 
 ## Echo teaches; it doesn't enforce
 
-A note can say "never `console.log`" but can't guarantee it. The only hard gate is the reflexes pack's memory-guard; everything else is teaching. A genuine "must never ship" rule is strong intel, not a gate — new gates are deliberate, rare additions, never the default. Don't write intel as if it were a gate.
+A note can say "never `console.log`" but can't guarantee it. The only hard gate is the reflexes pack's memory-guard (installation and consent rules: `base/setup.md`; mechanics: `reference/reflexes.md`); everything else is teaching. A genuine "must never ship" rule is strong intel, not a gate — new gates are deliberate, rare additions, never the default. Don't write intel as if it were a gate.
 
 ## The base — the rest of the manual
 
@@ -90,7 +92,7 @@ One note per moment, `when:`-fronted like any intel; these moments belong on you
 | `base/writing-notes.md` | creating or editing any `.echo` file |
 | `base/playbooks.md` | a routine worth saving surfaces |
 | `base/delegation.md` | about to spawn a subagent |
-| `base/setup.md` | adding Echo to a project (or migrating from squad) |
+| `base/setup.md` | adding Echo to a project, migrating from squad, or the user asks about or wants the reflexes pack |
 | `base/maintenance.md` | bloat, staleness, duplicates, "forget that", or removing Echo |
 
 **If `.echo/` is incomplete or broken,** degrade gracefully: no `.echo/` → no memory (offer setup, don't nag); a missing file → absent context, not an error; malformed front-matter → mention it once rather than silently relying on it.
