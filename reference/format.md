@@ -173,6 +173,10 @@ An area earns a folder when it has a few related notes. Until then a note can si
 (`intel/styling.md`). There is no index file — the directory listing *is* the index: you read the
 front-matter of the notes in an area when you first touch that area, never the whole tree.
 
+Cross-references between notes name the full path (`intel/gmail/drafts.md`), never a bare leaf
+name: leaf names repeat across areas (`gmail/drafts.md` and `swift/drafts.md` are different
+subjects), so an unqualified reference is ambiguous the day a second area coins the same topic.
+
 ---
 
 ## Writing: upsert, don't append
