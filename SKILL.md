@@ -7,7 +7,7 @@ description: Lightweight project memory for a coding agent. Use when working in 
 
 Echo is project memory: plain markdown in the repo carrying the team's priors — how the user works, what the project is, the gotchas already paid for — so no session starts blind. Treat it as context to lean on, not rules to satisfy. The one exception is **authority**: a consent gate in a profile, a playbook whose trigger matches, and the scope the user actually stated are not priors to weigh — they govern, and they are checked at the moment of action, never recalled from memory.
 
-**Echo is three behaviors.** **Read** at the start. **Retrieve** at each moment. **Capture** what's worth keeping. Everything else — formats, routing, playbook drafting, maintenance — lives in the skill's `base/` notes and loads only when its moment arrives (map at the bottom).
+**Echo is three behaviors.** **Orient** at the start. **Retrieve** at each moment. **Capture** what's worth keeping. Everything else — formats, routing, playbook drafting, maintenance — lives in the skill's `base/` notes and loads only when its moment arrives (map at the bottom).
 
 ## The files
 
@@ -25,15 +25,15 @@ Which file a fact belongs in is settled by two questions: **about the developer 
 
 ---
 
-## 1. Read — before any work
+## 1. Orient — before any work
 
 A ritual, not a judgment call. It runs at session start before the first action; it runs again **in full immediately after any compaction**; and if you ever catch yourself mid-session unoriented, it runs then. No task is too narrow, quick, read-only, or non-code to skip it — you can't judge whether orientation matters without orienting, and the read is cheap where being wrong isn't.
 
 The ritual: (1) read `~/.echo/profile.md` if present; (2) find your project profile — the file in `.echo/profiles/` whose `email:` matches your `git config user.email` — and **if it doesn't exist, create it now** (friendly filename from the email's local part, `email:` front-matter, body empty until Capture fills it), then read it; (3) read `.echo/project.md`; (4) list `.echo/intel/` and glance each area's `when:` lines; (5) glance every playbook's `when:` phrase. A profile whose email isn't yours is another person's: never load it or apply its preferences.
 
-**Reading includes weighing.** The always-on files have a budget of roughly a screenful (~30 lines) each; you're reading them anyway, so notice when one has grown past it — bloat that accretes across sessions surfaces nowhere else — flag it and offer the trim pass (`base/maintenance.md`).
+**Orienting includes weighing.** The always-on files have a budget of roughly a screenful (~30 lines) each; you're reading them anyway, so notice when one has grown past it — bloat that accretes across sessions surfaces nowhere else — flag it and offer the trim pass (`base/maintenance.md`).
 
-**Reading produces the trigger sheet.** The `when:` lines you just saw — intel notes, playbook phrases, and the `base/` moments below — are not a formality; they are your session's **watchlist**. Orientation isn't done until you're holding it: *these are the moments this project wants me to watch for*. Retrieve consults that sheet, not your general sense of relevance.
+**Orienting produces the trigger sheet.** The `when:` lines you just saw — intel notes, playbook phrases, and the `base/` moments below — are not a formality; they are your session's **watchlist**. Orientation isn't done until you're holding it: *these are the moments this project wants me to watch for*. Retrieve consults that sheet, not your general sense of relevance.
 
 **After a compaction, trust the files, not the summary.** A summary is context you *remember*, and the failure mode is momentum: continuing confidently past exactly-matching memory. Re-run the ritual, rebuild the sheet, and re-check anything mid-flight against the real files before touching it. Any unproposed inferred captures died with the old context — re-derive or let them go.
 
