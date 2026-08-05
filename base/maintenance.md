@@ -9,6 +9,10 @@ when: an always-on file looks bloated, a note looks stale or duplicated, the use
 - Overlapping or duplicate notes — upsert misses and merges that kept both sides leave twins.
 - Area health — an area whose notes share only a language or technology, not a subsystem, has stopped discriminating; propose the split.
 - Playbook triggers — each `when:` phrase still matches how the user actually asks.
+- Sheet weight — the trigger sheet is always-on too: when the corpus's `when:` lines outgrow what
+  a session can genuinely hold as a watchlist (roughly a screenful or two), propose merges, splits,
+  and retirements first. Overflow that pruning can't fix means the project has outgrown prose
+  indexing — surface that plainly rather than letting matching quietly decay.
 
 Findings are flagged and proposed, acted on only with approval. **Never prune silently or in the background** — removing knowledge is a deliberate, visible act, and Echo writes no maintenance files of its own.
 
