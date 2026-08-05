@@ -9,8 +9,8 @@ Echo is project memory: plain markdown in the repo carrying the team's priors �
 
 **Echo is three behaviors:**
 1. **Sync** — before any work: load the memory, build your watchlist.
-2. **Resolve** — at each moment that matters: resolve it against the file, never against your memory of it.
-3. **Learn** — when something worth keeping happens: save it through the gates; the default is nothing.
+2. **Learn** — when something worth keeping happens: save it through the gates; the default is nothing.
+3. **Resolve** — at each moment that matters: resolve it against the file, never against your memory of it.
 
 Everything else — formats, routing, playbook drafting, maintenance — lives in the skill's `base/` notes and loads only when its moment arrives (map at the bottom).
 
@@ -49,21 +49,7 @@ The ritual:
 
 ---
 
-## 2. Resolve — against the file, not your memory of it
-
-**One question at every new moment: is this on my sheet?** Match → open that file *before* acting — the intel note, the playbook, the base note. No match → carry on (a routine-sounding request with no matching playbook isn't an error; it's a cue to offer one).
-
-- **First touch of an area** — reading or editing, the first time each session: open the area and let each note's `when:`/`glob:` confirm it applies right now. The directory listing plus `when:` lines are the index; once per area, not per edit. **Running a project-specific command counts as touching its area.** Glance before you run it — *especially* the short, obvious-looking command; that's exactly where the gotcha hides.
-- **A playbook phrase lands** — read the playbook, follow it. A short command that implies a multi-step or hard-to-reverse sequence gets a trigger check before you improvise: a purpose-built playbook beats adjacent context.
-- **Before anything hard to reverse or that leaves the machine** — push, merge, deploy, delete — **feeling sure is the cue to check, not to skip checking.** Resolve against the *live* truth, never the remembered one: re-read any gate that names the action, re-check the playbook, confirm the user asked for *this*. The remembered summary is exactly what goes stale.
-
-**When sources disagree:** the project beats your profile's style — follow it and say why; a durable clash makes the losing line a candidate to update. But a **consent gate is not style**: no project convention silently overrides "ask before X" — the gate holds; surface the clash. The **code beats a stale note**: notes are strong priors, not ground truth — a note the code contradicts, or whose `anchor:` no longer resolves, is suspect and a candidate to update.
-
-**Subagents don't inherit Echo.** Copy the relevant context in; their reports come back to you as Learn signals. Read `base/delegation.md` before spawning one.
-
----
-
-## 3. Learn — through the gates, default nothing
+## 2. Learn — through the gates, default nothing
 
 **Most sessions should save nothing.** Over-capture is the failure: notes nobody reads, drowning the ones that matter. Learn keeps **knowledge** (a fact → a profile line or intel note) and **procedures** (a workflow run by name → a playbook); procedures clear a higher bar — a wrong note misinforms, a wrong step does harm.
 
@@ -84,6 +70,20 @@ The ritual:
 **The moment you're about to write, hand off to the base:** `base/routing.md` settles the home (subject, binding, one home per fact); `base/writing-notes.md` governs the craft (`when:` lines, paths, upsert, pointers). A *procedure* is drafted per `base/playbooks.md` — **always offered, never silently saved**, and never offered at all for destructive workflows.
 
 **Never write secrets** — credentials, tokens, internal hostnames/IPs, customer data — into any `.echo/` file; it's committed forever. Capture the *shape* ("staging needs an internal auth header — get it from 1Password"), never the value, and say the value was left out on purpose. Hard calls at the edges: `reference/learn.md`.
+
+---
+
+## 3. Resolve — against the file, not your memory of it
+
+**One question at every new moment: is this on my sheet?** Match → open that file *before* acting — the intel note, the playbook, the base note. No match → carry on (a routine-sounding request with no matching playbook isn't an error; it's a cue to offer one).
+
+- **First touch of an area** — reading or editing, the first time each session: open the area and let each note's `when:`/`glob:` confirm it applies right now. The directory listing plus `when:` lines are the index; once per area, not per edit. **Running a project-specific command counts as touching its area.** Glance before you run it — *especially* the short, obvious-looking command; that's exactly where the gotcha hides.
+- **A playbook phrase lands** — read the playbook, follow it. A short command that implies a multi-step or hard-to-reverse sequence gets a trigger check before you improvise: a purpose-built playbook beats adjacent context.
+- **Before anything hard to reverse or that leaves the machine** — push, merge, deploy, delete — **feeling sure is the cue to check, not to skip checking.** Resolve against the *live* truth, never the remembered one: re-read any gate that names the action, re-check the playbook, confirm the user asked for *this*. The remembered summary is exactly what goes stale.
+
+**When sources disagree:** the project beats your profile's style — follow it and say why; a durable clash makes the losing line a candidate to update. But a **consent gate is not style**: no project convention silently overrides "ask before X" — the gate holds; surface the clash. The **code beats a stale note**: notes are strong priors, not ground truth — a note the code contradicts, or whose `anchor:` no longer resolves, is suspect and a candidate to update.
+
+**Subagents don't inherit Echo.** Copy the relevant context in; their reports come back to you as Learn signals. Read `base/delegation.md` before spawning one.
 
 ---
 
