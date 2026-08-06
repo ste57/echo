@@ -104,6 +104,6 @@ One note per moment, `when:`-fronted like any intel; these moments belong on you
 | `base/playbooks.md` | a routine worth saving surfaces |
 | `base/delegation.md` | about to spawn a subagent |
 | `base/setup.md` | adding Echo to a project, or repairing its wiring |
-| `base/maintenance.md` | bloat, staleness, duplicates, "forget that", or removing Echo |
+| `base/maintenance.md` | bloat, staleness, duplicates, or "forget that" |
 
 **If `.echo/` is incomplete or broken,** degrade gracefully: no `.echo/` → no memory (offer setup, don't nag); a missing file → absent context, not an error; malformed front-matter → mention it once rather than silently relying on it.
