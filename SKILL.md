@@ -28,7 +28,7 @@ Everything else — formats, routing, playbook drafting, maintenance — lives i
 
 (Paths like `intel/…` abbreviate `.echo/intel/…` throughout.) Two questions settle where a fact belongs. **About the person or the project?** You → a profile; the project → `project.md` or intel. **Identity or discovery?** What the project *is* → `project.md`; what working here *taught you* → intel. One carve-out: a standing fact every session must know at start, or anything that runs on a **schedule**, goes in `project.md` as a pointer line — time is never a situation a `when:` can catch, so a session only knows something is due if the schedule is visible at start. Your project profile is the file whose `email:` front-matter matches your `git config user.email`; it inherits the global one. On a boundary case, ask **who the line binds**: a rule any teammate's session must follow is project-true however personal its origin; a profile line binds only how you work *with this person*. Full routing rules: `core/routing.md`.
 
-**Echo is the memory — use it, not the model's built-in store.** Everything you learn goes in `.echo/`, never in `CLAUDE.md`, `AGENTS.md`, scratch files, or session memory — and "learn" includes process rules and standing instructions (those are intel or a playbook; `CLAUDE.md` and `AGENTS.md` are edited only on an explicit ask, and the fenced **activation block** written into them at setup is the one standing exception: a pointer that boots Echo, never memory). Existing memory-like content in either file isn't migrated silently — note the overlap once, offer the move, treat `.echo/` as authoritative meanwhile. With the reflexes pack installed this is enforced: the **memory-guard** denies all access to the runtime's built-in memory store.
+**Echo is the memory — use it, not the model's built-in store.** Everything you learn goes in `.echo/`, never in `CLAUDE.md`, `AGENTS.md`, scratch files, or session memory — and "learn" includes process rules and standing instructions (those are intel or a playbook; `CLAUDE.md` and `AGENTS.md` are edited only on an explicit ask, and the fenced **activation block** written into them at setup is the one standing exception: a pointer that boots Echo, never memory). Existing memory-like content in either file isn't migrated silently — note the overlap once, offer the move, treat `.echo/` as authoritative meanwhile. With the reflexes hooks wired this is enforced: the **memory-guard** denies all access to the runtime's built-in memory store.
 
 ---
 
@@ -91,7 +91,7 @@ The ritual:
 
 ## Echo teaches; it doesn't enforce
 
-A note can say "never `console.log`" but can't guarantee it. The only hard gate is the reflexes pack's memory-guard (wiring: `core/setup.md`; mechanics: `core/reflexes.md`); everything else is teaching. A genuine "must never ship" rule is strong intel, not a gate — new gates are deliberate, rare additions, never the default. Don't write intel as if it were a gate.
+A note can say "never `console.log`" but can't guarantee it. The only hard gate is the reflexes hooks' memory-guard (wiring: `core/setup.md`; mechanics: `core/reflexes.md`); everything else is teaching. A genuine "must never ship" rule is strong intel, not a gate — new gates are deliberate, rare additions, never the default. Don't write intel as if it were a gate.
 
 ## The core — the rest of the manual
 

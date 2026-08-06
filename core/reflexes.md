@@ -5,11 +5,11 @@ when: wiring or repairing the reflexes hooks, a hook misfires, or you need exact
 
 The skill (SKILL.md) is the brain: invoked, it reads your `.echo/` memory and runs Learn by
 judgment. That delivers Echo's value but leans on the model *remembering* to do it — research calls
-the failure "memory blindness": the memory exists but never loads. The reflexes pack closes that gap
-with four **tiny shell hooks** — no Python, no interpreter to install, just POSIX `/bin/sh`.
+the failure "memory blindness": the memory exists but never loads. The reflexes hooks close that gap
+— four **tiny shell scripts** — no Python, no interpreter to install, just POSIX `/bin/sh`.
 
 The hooks stay deliberately dumb. They never parse your notes or inject file contents — each emits a
-short, **static** instruction that nudges the re-invoked `/echo` skill at the right moment. All the
+short, **static** instruction that puts the skill back in front of the model at the right moment. All the
 reading, matching, and judging is the skill's job; the hooks only guarantee the one thing prose can't.
 
 **One source of truth.** The scripts live in the embedded skill — `.claude/skills/echo/hooks/*.sh`,
@@ -18,18 +18,18 @@ committed with the project — and settings carry only entries pointing at them 
 else holds a copy, so nothing can drift. A checkout without the embedded skill fails open — the
 entry runs nothing and does nothing.
 
-- **session-start** → tells the model to invoke `/echo` and read `.echo/` memory, so every session
-  (and every post-compaction continuation) starts oriented. On a plain resume it only confirms Echo
-  is still active — the context already loaded is still there, so no re-invoke. In a repo that
-  *embeds* the skill (a committed `.claude/skills/echo/`), it points the session at that copy by
-  file path instead of the `/echo` name — a personal install can shadow a skill name, but it can't
-  shadow a file read.
+- **session-start** → tells the model to read the embedded skill (`.claude/skills/echo/SKILL.md`)
+  and `.echo/` memory, so every session (and every post-compaction continuation) runs Sync. It
+  points at the copy by file path on purpose — a personal install can shadow a skill name, but it
+  can't shadow a file read; where no embedded copy exists (personal bootstrap), it says invoke
+  `/echo` instead. On a plain resume it only confirms Echo is still active — the context already
+  loaded is still there.
 - **memory-guard** → the one **hard gate**, two denies: (a) any access (read or write — it's wired
   to all tools) to the runtime's built-in memory store (`~/.claude/projects/…/memory/`) — Echo owns
   memory; the store is stale and invisible to the team; (b) a **subagent** writing into `.echo/` —
   a subagent never read the skill, so its captures skip every Learn gate (proven in the field by
   front-matter-less notes); it reports findings back and the main agent captures. Reads stay
-  allowed. It's the only hard-gate hook the pack ships.
+  allowed. It's the only hard-gate hook Echo ships.
 - **pre-commit** → on a git commit/push, asks whether a playbook governs the work in flight, points
   the model at git-area intel, and cues the Learn pass. A commit is a real "natural stop" with a
   model turn after it — the dependable capture checkpoint.
@@ -56,12 +56,12 @@ memory-guard's deliberate deny ever blocks.
    block and *append* Echo's entries into each event's array; skip any whose command already
    contains `skills/echo/hooks/` (so re-install doesn't double-register). Never overwrite a user's
    hooks. Also add `permissions.allow: ["Skill(echo)", "Write(.echo/**)", "Edit(.echo/**)",
-   "Write(~/.echo/**)", "Edit(~/.echo/**)"]` — the skill rule so session-start re-invocation isn't
-   permission-gated, the write rules so a quiet Learn save doesn't stop at a permission prompt
-   (a "quiet save" that prompts isn't quiet).
-   Default to `.claude/settings.json` (committed) — teammates with Echo installed get working hooks,
-   teammates without get inert fail-open entries; only if the user wants the wiring private, use
-   `.claude/settings.local.json`.
+   "Write(~/.echo/**)", "Edit(~/.echo/**)"]` — the write rules keep a quiet Learn save from
+   stopping at a permission prompt (a "quiet save" that prompts isn't quiet); `Skill(echo)` only
+   matters for bootstrap installs that still invoke by name, and is inert where the name is off.
+   Default to `.claude/settings.json` (committed): the wiring travels with the project, and every
+   checkout carries the embedded scripts it points at. Use `.claude/settings.local.json` only when
+   someone wants private wiring.
 2. Tell the user what was wired and that it takes effect from the **next** session — assume nothing
    changes in the current one. Everyone who pulls the committed wiring gets the runtime's own
    one-time consent prompt on their first session.
@@ -82,7 +82,7 @@ hook, remove its entry from settings; the memory stays.
 ## The scripts — `hooks/` in the skill
 
 The four bodies live at `hooks/session_start.sh`, `hooks/memory_guard.sh`, `hooks/pre_commit.sh`,
-`hooks/user_prompt.sh` in the skill directory — the single copy every project runs. Read them there;
+`hooks/user_prompt.sh` in the embedded skill directory — the project's one copy, the one every session runs. Read them there;
 this document describes behavior and never restates bodies (a restated script is a second source of
 truth waiting to drift). Behavioral notes that matter:
 
@@ -110,8 +110,8 @@ truth waiting to drift). Behavioral notes that matter:
 ## Wiring — settings.json
 
 Append into the project's `.claude/settings.json` (committed). The
-`Skill(echo)` permission lets the session-start re-invocation run without a prompt; the
-`Write`/`Edit` rules keep quiet Learn saves from prompting.
+`Write`/`Edit` rules keep quiet Learn saves from prompting; `Skill(echo)` only matters for
+bootstrap installs that invoke by name.
 
 ```json
 {
@@ -154,7 +154,7 @@ the wiring above covers re-orientation on its own; remove any legacy PostCompact
 - **Static by design.** The hooks read only the hook payload (via `grep`), never your notes — so
   adding intel, a playbook, or a profile line needs no reinstall and no code change.
 - **Hard gates in v1 = the memory-guard, and nothing else.** A genuine "this must never ship" rule
-  beyond memory ownership isn't enforced by the pack — capture it as strong intel (the note teaches
+  beyond memory ownership isn't enforced by the hooks — capture it as strong intel (the note teaches
   it). A new hard gate is a deliberate future addition, kept rare on purpose: every gate is weight;
   priors are the default.
 - **Fail-open.** Any hook error → no output → no effect. A broken hook never blocks your editor; only
