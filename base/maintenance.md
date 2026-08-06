@@ -18,4 +18,4 @@ Findings are flagged and proposed, acted on only with approval. **Never prune si
 
 **Forgetting.** "Forget that" / "that's no longer true" / "drop the note about X" is a delete: locate the entry by topic or anchor, remove the note (or just the stale line; delete the leaf if it's left empty), confirm in one line — *"removed: …"*. Git keeps the history; don't agonize. Distinct from a mid-task change of mind, which captures nothing.
 
-**Removing Echo from a project** means removing the activation block (its fenced markers mark exactly what to delete) and the settings wiring — each is documented where it's defined (`reference/activation.md`, `reference/reflexes.md`). **`.echo/` is the team's memory and is never deleted as part of an uninstall**; it keeps working as plain readable context even with no skill anywhere.
+**Removing Echo** means removing the activation block and the settings wiring — **never `.echo/`**: the memory is the team's property, not the skill's, and it keeps working as plain readable context with no skill anywhere.
