@@ -31,4 +31,27 @@ path is in the matcher config.
 - **Reconcile before writing** (Learn gate 3): upsert — update in place, don't append a near-duplicate; if a sibling would compete for the same trigger, narrow both `when:` lines so a future agent can tell them apart. Upsert has a counterweight: if an update would make a note answer a second situation or grow past a screenful, split it into siblings with narrowed `when:` lines instead of appending. The `when:` is part of every edit: content addressed to a reader the current trigger won't summon either widens the `when:` or forces the split — a note that outgrows its trigger is invisible exactly when it's needed.
 - **One home per fact, pointers between homes.** A capture that falls inside content already filed anywhere — a playbook's steps, another note's fact, a profile line, or one of the skill's own notes — is written as a *pointer* to that home plus the delta (a waiver, an exception, a local adaptation), never a paraphrase; a stripped summary answers confidently and wrongly. A pointer names its target by path (`intel/api/auth.md`, never just "the auth note"): leaf names repeat across areas, so an unqualified name is ambiguous the day a second area coins the same topic.
 
-Full field reference and examples: `reference/format.md`.
+### Front-matter fields
+
+| Field | Required | Purpose |
+|-------|----------|---------|
+| `when:` | yes | One line describing the *situation* this note applies to — how a future session knows to read it. |
+| `glob:` | optional | File patterns the fact bears on. A *relevance hint* used when reading an area — not an auto-trigger. |
+| `anchor:` | optional | The code or file this fact depends on (`path` or `path:symbol`). A *staleness probe*: an anchor that no longer resolves means verify before trusting. |
+
+### The intel tree
+
+Areas are shallow folders grouping related notes — one level is usually enough. An area earns a
+folder when it has a few related notes; until then a note can sit one level up (`intel/styling.md`).
+There is no index file: the directory listing plus the `when:` lines *are* the index.
+
+```
+.echo/intel/
+  api/        auth.md   routes.md   rate-limits.md
+  db/         migrations.md   queries.md
+  ui/         components.md   styling.md
+```
+
+**No enforcement fields.** Front-matter carries no `block:` or the like — nothing in a note blocks
+anything. A "must never ship" rule is captured as strong intel (the note teaches it); the only hard
+gate anywhere is the memory-guard (`base/reflexes.md`).

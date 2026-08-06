@@ -7,4 +7,16 @@ A playbook is always **offered, never silently saved** — even when the user na
 - **Safe to suggest?** **Never** offer a workflow whose steps delete, force-push, deploy beyond local, touch credentials, or migrate shared data — capture the *shape* as intel ("release runs `make deploy` — do it by hand"), never a playbook that runs it. If the user *explicitly asks* for such a playbook anyway, build it their way — but write the dangerous step as "confirm with the user, then run …". You never strip that confirmation; only the user can waive it, and the step then records the waiver (the request itself is the authorization).
 - **Draft, show, confirm.** Rebuild the steps from what actually ran, drop anything situational, strip auto-confirm flags (`--force`/`--yes`; stripping a flag never rescues a workflow the safety bar barred), and show the draft for the user to edit and name. Saves only on a yes; raise it batched at a breakpoint, never mid-task; if declined, don't re-offer.
 
+**The shape** — front-matter is just `when:`, and here it's a literal trigger phrase, not a
+situation; `glob:`/`anchor:` don't apply. The body is the steps:
+
+```markdown
+---
+when: user says "ship it" / "ship this"
+---
+1. Run `pnpm test && pnpm typecheck`. Stop if either fails.
+2. Write a conventional-commit message.
+3. Push the branch, open a PR with a 3-bullet description.
+```
+
 If a single teach carries *both* a repeatable sequence and a durable fact, split it: the steps → a playbook, the fact → intel, and the playbook *references* the fact rather than restating it, so the fact keeps one home.

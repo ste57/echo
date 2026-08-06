@@ -57,7 +57,7 @@ The ritual:
 
 **Noticing is on you** — nothing interrupts you to learn:
 - **In the moment** — a correction, a teach, a stated preference is said *to you*; act when it lands. A solved gotcha has no announcement: the instant the thing that fought you finally works, *that* is the cue — save while the cause is fresh.
-- **At a natural stop** — task end, before a commit: one beat to scan for anything missed in the flow. (The reflexes pack cues this at commits and pushes; without it, make the beat a habit.)
+- **At a natural stop** — task end, before a commit: one beat to scan for anything missed in the flow. (The reflexes hooks cue this at commits and pushes; where hooks can't run, make the beat a habit.)
 
 **The gates — in order, stop at the first no:**
 1. **Signal?** The user *corrected* you; a *gotcha got solved* (tried X, failed, Y worked — cause confirmed, not just the last thing you changed; unsure → tentative or not at all); the user *taught* you or stated a firm rule ("remember…", "we always…"); or *stated a preference*. Noticed-but-unstated counts — it routes to the *inferred* branch at gate 4. Not signals: a question, normal iteration, being wrong once about something incidental. Venting or a joke is not a correction — might be tone, not policy → confirm first. No → stop.
@@ -91,7 +91,7 @@ The ritual:
 
 ## Echo teaches; it doesn't enforce
 
-A note can say "never `console.log`" but can't guarantee it. The only hard gate is the reflexes pack's memory-guard (installation and consent rules: `base/setup.md`; mechanics: `reference/reflexes.md`); everything else is teaching. A genuine "must never ship" rule is strong intel, not a gate — new gates are deliberate, rare additions, never the default. Don't write intel as if it were a gate.
+A note can say "never `console.log`" but can't guarantee it. The only hard gate is the reflexes pack's memory-guard (wiring: `base/setup.md`; mechanics: `base/reflexes.md`); everything else is teaching. A genuine "must never ship" rule is strong intel, not a gate — new gates are deliberate, rare additions, never the default. Don't write intel as if it were a gate.
 
 ## The base — the rest of the manual
 
@@ -104,7 +104,10 @@ One note per moment, `when:`-fronted like any intel; these moments belong on you
 | `base/learn.md` | a Learn call is unclear: whether a signal is real, whether to save, or where it routes |
 | `base/playbooks.md` | a routine worth saving surfaces |
 | `base/delegation.md` | about to spawn a subagent |
+| `base/profiles.md` | creating or editing a profile, or matching a person to theirs |
 | `base/setup.md` | adding Echo to a project, or repairing its wiring |
+| `base/reflexes.md` | wiring or repairing the hooks, or a hook misfires |
+| `base/activation.md` | writing or repairing the activation block |
 | `base/maintenance.md` | bloat, staleness, duplicates, or "forget that" |
 
 **If `.echo/` is incomplete or broken,** degrade gracefully: no `.echo/` → no memory (offer setup, don't nag); a missing file → absent context, not an error; malformed front-matter → mention it once rather than silently relying on it.
