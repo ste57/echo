@@ -6,6 +6,7 @@ when: an always-on file looks bloated, a note looks stale or duplicated, the use
 **The health pass (run on request, report before touching):**
 - Always-on sizes vs the ~30-line budget; propose trims for anything over.
 - Anchors that no longer resolve — the note is suspect; verify against code, propose update or retirement.
+- Ungrounded claims — flat mechanism-claims and universals ("only", "always", "never") that nothing visible traces; a right consequence can hide a wrong mechanism, so propose a re-trace or a tentative marker.
 - Overlapping or duplicate notes — upsert misses and merges that kept both sides leave twins.
 - Area health — an area whose notes share only a language or technology, not a subsystem, has stopped discriminating; propose the split.
 - Playbook triggers — each `when:` phrase still matches how the user actually asks.

@@ -44,6 +44,19 @@ changed before it worked? Post-hoc isn't proof. If you didn't isolate it, save i
 
 ---
 
+## Discovered structure — right consequence, wrong mechanism
+
+The most dangerous bad note isn't false — it's *half-traced*. You read part of a subsystem, observe
+behaviour that fits, and write the mechanism ("this view sits in the root stack") when only the
+consequence was ever verified. The consequence being right is exactly what makes it survive: every
+casual check passes, and it's caught only by a reviewer who already knows the subsystem — a control
+you can't rely on. The gotcha rule's causality boundary generalizes to every discovered fact:
+observation grounds the behaviour you saw; the *why* needs the trace. Save what you traced flatly,
+mark what you infer ("seems…") or drop it — the craft is `core/intel.md`'s **assert only what you
+traced**.
+
+---
+
 ## Explicit teach — highest trust, save now
 
 A direct teach ("Remember: always go through the billing service, never call payments directly") is

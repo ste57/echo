@@ -31,8 +31,9 @@ entry runs nothing and does nothing.
   front-matter-less notes); it reports findings back and the main agent captures. Reads stay
   allowed. It's the only hard-gate hook Echo ships.
 - **pre-commit** → on a git commit/push, asks whether a playbook governs the work in flight, points
-  the model at git-area intel, and cues the Learn pass. A commit is a real "natural stop" with a
-  model turn after it — the dependable capture checkpoint.
+  the model at git-area intel, and cues the Learn pass — and, when the commit carries `.echo/`
+  files, a claims check on each new or edited note before it ships. A commit is a real "natural
+  stop" with a model turn after it — the dependable capture checkpoint.
 - **user-prompt** → when you say "remember…" or address Echo directly ("echo: …" / "echo, …" — the
   punctuation is required, so a prompt about the `echo` shell command doesn't false-fire), cues the
   Learn pass immediately. The reliable path for an explicit teach.
@@ -100,7 +101,8 @@ truth waiting to drift). Behavioral notes that matter:
   tools. Fail-open: anything it can't clearly identify is allowed.
 - **pre-commit** scopes its match to the `command` value with word boundaries (neither "legit push"
   nor "gitcommit" match) and emits a static checklist: playbook first, git intel second, Learn pass
-  third; a subagent is told to report findings back instead of writing `.echo/`.
+  third, and a claims check on any `.echo/` note in the commit fourth; a subagent is told to report
+  findings back instead of writing `.echo/`.
 - **user-prompt** matches a teach verb ("remember", "note that", "don't forget", "for the record")
   or a direct address (`echo:` / `echo,`) near the start of the prompt, with word boundaries
   ("remembering" and `echo $PATH` stay silent). Playbook-trigger matching is left to the skill.
