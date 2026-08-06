@@ -1,3 +1,6 @@
+---
+when: a Learn call is unclear — whether a signal is real, whether to save, where it routes, or how to handle a delete
+---
 # Echo Learn — reasoning at the edges
 
 SKILL.md carries the Learn rule: the signals, the judge (gate 2's two questions), reconcile, and the

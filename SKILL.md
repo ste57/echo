@@ -71,7 +71,7 @@ The ritual:
 
 **The moment you're about to write, hand off to the base:** `base/routing.md` settles the home (subject, binding, one home per fact); `base/intel.md` governs the craft (`when:` lines, paths, upsert, pointers). A *procedure* is drafted per `base/playbooks.md` — **always offered, never silently saved**, and never offered at all for destructive workflows.
 
-**Never write secrets** — credentials, tokens, internal hostnames/IPs, customer data — into any `.echo/` file; it's committed forever. Capture everything but the value: keep the identifier ("deploys need the `X-Deploy-Token` header — value lives in the team's secret store"), never the secret itself, and say so in the one-line acknowledgment. Hard calls at the edges: `reference/learn.md`.
+**Never write secrets** — credentials, tokens, internal hostnames/IPs, customer data — into any `.echo/` file; it's committed forever. Capture everything but the value: keep the identifier ("deploys need the `X-Deploy-Token` header — value lives in the team's secret store"), never the secret itself, and say so in the one-line acknowledgment. Hard calls at the edges: `base/learn.md`.
 
 ---
 
@@ -101,6 +101,7 @@ One note per moment, `when:`-fronted like any intel; these moments belong on you
 |------|--------------|
 | `base/routing.md` | deciding which `.echo` file a fact belongs in, promoting or moving a line |
 | `base/intel.md` | creating or editing any `.echo` file (intel craft plus the write rules shared by every file) |
+| `base/learn.md` | a Learn call is unclear: whether a signal is real, whether to save, or where it routes |
 | `base/playbooks.md` | a routine worth saving surfaces |
 | `base/delegation.md` | about to spawn a subagent |
 | `base/setup.md` | adding Echo to a project, or repairing its wiring |
