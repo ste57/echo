@@ -1,4 +1,5 @@
 #!/bin/sh
+LC_ALL=C; export LC_ALL   # byte semantics: BSD tr/sed/grep abort on invalid UTF-8 in a payload
 # Echo re-activation. Emits a static instruction to load Echo; the skill does the reading.
 # A repo with an embedded skill copy (.claude/skills/echo/ committed) is told to read that copy
 # by path — a personal install can shadow the /echo name, but it can't shadow a file read.

@@ -124,8 +124,8 @@ Always check what's already filed for the topic first:
 ## Forgetting — an explicit delete
 
 "Forget that — it's not true anymore" isn't a capture and isn't a change-of-mind; it's an instruction
-to remove something already saved. Locate the note by topic or anchor, delete the stale line (or the
-whole leaf, if that empties it), and confirm in one line. Git keeps the history, so it's reversible.
+to remove something already saved. That's a delete, not a Learn call — procedure in
+`core/maintenance.md`.
 
 ---
 

@@ -99,7 +99,7 @@ One note per moment, `when:`-fronted like any intel; these moments belong on you
 
 | Note | Read it when |
 |------|--------------|
-| `core/routing.md` | deciding which `.echo` file a fact belongs in, promoting or moving a line |
+| `core/routing.md` | deciding which `.echo` file a fact belongs in, promoting or moving a line, or resolving a clash between two versions of a note |
 | `core/intel.md` | creating or editing any `.echo` file (intel craft plus the write rules shared by every file) |
 | `core/learn.md` | a Learn call is unclear: whether a signal is real, whether to save, or where it routes |
 | `core/playbooks.md` | a routine worth saving surfaces |

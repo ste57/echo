@@ -23,7 +23,7 @@ email: alex.kim@acme.io
 `git config user.email`. No match → you're new here: create yours as part of Sync (filename from
 the email's local part, `email:` front-matter, empty body). A profile missing its `email:` can't be
 matched — flag it once. **Names must be unique** — if the name you want is taken, qualify it
-(`alex-k.md`); two people never share a file. (If `git config user.email` is unset, ask the user
+(two `alex`es → the second becomes `alex-k.md`); two people never share a file. (If `git config user.email` is unset, ask the user
 how to identify their profile. Non-interactive with git → `git config user.name`; no git at all →
 `local.md`, no `email:` needed — single-user mode has one profile anyway. Never create an
 empty-named `.md`.)
