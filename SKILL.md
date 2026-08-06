@@ -69,7 +69,7 @@ The ritual:
 > *"No — component helpers go in a sibling `*.utils.ts`, not the component file."* → correction ✓, durable ✓, nothing filed → save to `intel/ui/file-layout.md`, note it.
 > *"Actually, don't rename that variable right now."* → looks like a correction, but it's a one-off → judge fails → **do nothing.**
 
-**The moment you're about to write, hand off to the base:** `base/routing.md` settles the home (subject, binding, one home per fact); `base/writing-notes.md` governs the craft (`when:` lines, paths, upsert, pointers). A *procedure* is drafted per `base/playbooks.md` — **always offered, never silently saved**, and never offered at all for destructive workflows.
+**The moment you're about to write, hand off to the base:** `base/routing.md` settles the home (subject, binding, one home per fact); `base/writing.md` governs the craft (`when:` lines, paths, upsert, pointers). A *procedure* is drafted per `base/playbooks.md` — **always offered, never silently saved**, and never offered at all for destructive workflows.
 
 **Never write secrets** — credentials, tokens, internal hostnames/IPs, customer data — into any `.echo/` file; it's committed forever. Capture everything but the value: keep the identifier ("deploys need the `X-Deploy-Token` header — value lives in the team's secret store"), never the secret itself, and say so in the one-line acknowledgment. Hard calls at the edges: `reference/learn.md`.
 
@@ -100,7 +100,7 @@ One note per moment, `when:`-fronted like any intel; these moments belong on you
 | Note | Read it when |
 |------|--------------|
 | `base/routing.md` | deciding which `.echo` file a fact belongs in, promoting or moving a line |
-| `base/writing-notes.md` | creating or editing any `.echo` file |
+| `base/writing.md` | creating or editing any `.echo` file |
 | `base/playbooks.md` | a routine worth saving surfaces |
 | `base/delegation.md` | about to spawn a subagent |
 | `base/setup.md` | adding Echo to a project, migrating from squad, or the user asks about or wants the reflexes pack |
