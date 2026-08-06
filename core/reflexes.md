@@ -42,7 +42,7 @@ doesn't run between the trigger and the summary). So the dependable capture mome
 teaches (user-prompt) and commits (pre-commit); a long, commit-less session that auto-compacts can
 still drop an un-prompted inferred note. That's a real limit, not papered over.
 
-The hooks are a **standard component of embedding** (`base/setup.md`), and consent is structural
+The hooks are a **standard component of embedding** (`core/setup.md`), and consent is structural
 rather than ceremonial: each person's runtime shows its own one-time approval prompt for the
 project's hooks, and declining leaves them inert for that person. The scripts read nothing but the
 hook payload, and everything is **fail-open** — any hook error does nothing; only the
@@ -50,7 +50,7 @@ memory-guard's deliberate deny ever blocks.
 
 ---
 
-## Wiring procedure (a standard step of embedding — `base/setup.md`)
+## Wiring procedure (a standard step of embedding — `core/setup.md`)
 
 1. Wire the four hooks into settings (see **Wiring**), **idempotently**: read the existing `hooks`
    block and *append* Echo's entries into each event's array; skip any whose command already
@@ -67,7 +67,7 @@ memory-guard's deliberate deny ever blocks.
    one-time consent prompt on their first session.
 
 **Upgrading:** the hooks ride the embedded copy — syncing `.claude/skills/echo/` updates them
-(`base/setup.md`); there is nothing separate to do.
+(`core/setup.md`); there is nothing separate to do.
 
 **No interpreter dependency.** The hooks are POSIX `sh`, present on every macOS/Linux machine.
 Windows without a POSIX shell isn't supported in v1 — Echo still works as a pure skill, just without
@@ -162,6 +162,6 @@ the wiring above covers re-orientation on its own; remove any legacy PostCompact
 - **Subagents.** PreToolUse hooks fire for a spawned agent's tool calls too: the memory-guard covers
   them, and the commit cue tells a subagent to report findings back rather than write `.echo/`
   itself (a subagent never read the skill, so its captures skip every gate — proven in the field by
-  a front-matter-less note). What hooks can't do is give a subagent your memory — see `base/delegation.md` for that.
+  a front-matter-less note). What hooks can't do is give a subagent your memory — see `core/delegation.md` for that.
 - **`CLAUDE_PROJECT_DIR`** locates the project at runtime; the scripts fall back to `$PWD`. Nested
   checkouts with more than one `.echo/` aren't supported — assume the repo root.

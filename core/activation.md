@@ -33,5 +33,5 @@ agent; updates arrive with a normal pull. Don't store memory in this file — it
 **It reaches everyone; it compels most, not all.** A pointer teaches — it can't force an agent
 disposed to skim scaffolding, and no wording closes that gap entirely. The wording names the two
 common overrides (a task judged too narrow, or too unrelated, to orient for) and why both fail.
-Where enforcement matters, the reflexes hooks are the sharper layer (`base/reflexes.md`); on
+Where enforcement matters, the reflexes hooks are the sharper layer (`core/reflexes.md`); on
 agents without hooks, this block is the whole binding.

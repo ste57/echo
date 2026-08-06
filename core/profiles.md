@@ -29,4 +29,4 @@ how to identify their profile. Non-interactive with git → `git config user.nam
 empty-named `.md`.)
 
 Committed to git. The global profile underlies it — on conflict, the project line wins (it's more
-specific). Preferences route between the two by subject: `base/routing.md`.
+specific). Preferences route between the two by subject: `core/routing.md`.

@@ -54,4 +54,4 @@ There is no index file: the directory listing plus the `when:` lines *are* the i
 
 **No enforcement fields.** Front-matter carries no `block:` or the like — nothing in a note blocks
 anything. A "must never ship" rule is captured as strong intel (the note teaches it); the only hard
-gate anywhere is the memory-guard (`base/reflexes.md`).
+gate anywhere is the memory-guard (`core/reflexes.md`).

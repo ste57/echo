@@ -12,7 +12,7 @@ Echo is project memory: plain markdown in the repo carrying the team's priors �
 2. **Learn** — when something worth keeping happens: save it through the gates; the default is nothing.
 3. **Resolve** — at each moment that matters: resolve it against the file, never against your memory of it.
 
-Everything else — formats, routing, playbook drafting, maintenance — lives in the skill's `base/` notes and loads only when its moment arrives (map at the bottom).
+Everything else — formats, routing, playbook drafting, maintenance — lives in the skill's `core/` notes and loads only when its moment arrives (map at the bottom).
 
 ## The files
 
@@ -26,7 +26,7 @@ Everything else — formats, routing, playbook drafting, maintenance — lives i
 
 **Always** = at every Sync (session start, and again after every compaction), then held for the whole session. **When relevant** = at the Resolve moment its `when:` names. **On mention** = when its trigger phrase lands.
 
-(Paths like `intel/…` abbreviate `.echo/intel/…` throughout.) Two questions settle where a fact belongs. **About the person or the project?** You → a profile; the project → `project.md` or intel. **Identity or discovery?** What the project *is* → `project.md`; what working here *taught you* → intel. One carve-out: a standing fact every session must know at start, or anything that runs on a **schedule**, goes in `project.md` as a pointer line — time is never a situation a `when:` can catch, so a session only knows something is due if the schedule is visible at start. Your project profile is the file whose `email:` front-matter matches your `git config user.email`; it inherits the global one. On a boundary case, ask **who the line binds**: a rule any teammate's session must follow is project-true however personal its origin; a profile line binds only how you work *with this person*. Full routing rules: `base/routing.md`.
+(Paths like `intel/…` abbreviate `.echo/intel/…` throughout.) Two questions settle where a fact belongs. **About the person or the project?** You → a profile; the project → `project.md` or intel. **Identity or discovery?** What the project *is* → `project.md`; what working here *taught you* → intel. One carve-out: a standing fact every session must know at start, or anything that runs on a **schedule**, goes in `project.md` as a pointer line — time is never a situation a `when:` can catch, so a session only knows something is due if the schedule is visible at start. Your project profile is the file whose `email:` front-matter matches your `git config user.email`; it inherits the global one. On a boundary case, ask **who the line binds**: a rule any teammate's session must follow is project-true however personal its origin; a profile line binds only how you work *with this person*. Full routing rules: `core/routing.md`.
 
 **Echo is the memory — use it, not the model's built-in store.** Everything you learn goes in `.echo/`, never in `CLAUDE.md`, `AGENTS.md`, scratch files, or session memory — and "learn" includes process rules and standing instructions (those are intel or a playbook; `CLAUDE.md` and `AGENTS.md` are edited only on an explicit ask, and the fenced **activation block** written into them at setup is the one standing exception: a pointer that boots Echo, never memory). Existing memory-like content in either file isn't migrated silently — note the overlap once, offer the move, treat `.echo/` as authoritative meanwhile. With the reflexes pack installed this is enforced: the **memory-guard** denies all access to the runtime's built-in memory store.
 
@@ -43,9 +43,9 @@ The ritual:
 4. List `.echo/intel/` and glance each area's `when:` lines.
 5. Glance every playbook's `when:` phrase in `.echo/playbooks/`.
 
-**You are not synced until you hold the trigger sheet.** Every `when:` you just saw — intel notes, playbook phrases, the `base/` moments below — is your session's **watchlist**: *these are the moments this project wants me to watch for*. Resolve consults that sheet, not your general sense of relevance. If you can't say what's on your sheet, you read without syncing.
+**You are not synced until you hold the trigger sheet.** Every `when:` you just saw — intel notes, playbook phrases, the `core/` moments below — is your session's **watchlist**: *these are the moments this project wants me to watch for*. Resolve consults that sheet, not your general sense of relevance. If you can't say what's on your sheet, you read without syncing.
 
-**Weigh while you read.** The always-on files budget at roughly a screenful (~30 lines) each. You're reading them anyway — when one has grown past that, say so and offer the trim pass (`base/maintenance.md`). Accreted bloat surfaces nowhere else.
+**Weigh while you read.** The always-on files budget at roughly a screenful (~30 lines) each. You're reading them anyway — when one has grown past that, say so and offer the trim pass (`core/maintenance.md`). Accreted bloat surfaces nowhere else.
 
 **After a compaction: the summary is not the files.** Your confidence is inherited, not earned — momentum straight past exactly-matching memory is how compacted sessions ship defects. Re-run the ritual, rebuild the sheet, and re-check anything your next action builds on — *including work the summary calls finished* — against the real files. Every area counts as untouched again: first-touch resets with the context. Unproposed inferred learnings died with the old context; re-derive or let them go.
 
@@ -69,9 +69,9 @@ The ritual:
 > *"No — component helpers go in a sibling `*.utils.ts`, not the component file."* → correction ✓, durable ✓, nothing filed → save to `intel/ui/file-layout.md`, note it.
 > *"Actually, don't rename that variable right now."* → looks like a correction, but it's a one-off → judge fails → **do nothing.**
 
-**The moment you're about to write, hand off to the base:** `base/routing.md` settles the home (subject, binding, one home per fact); `base/intel.md` governs the craft (`when:` lines, paths, upsert, pointers). A *procedure* is drafted per `base/playbooks.md` — **always offered, never silently saved**, and never offered at all for destructive workflows.
+**The moment you're about to write, hand off to the base:** `core/routing.md` settles the home (subject, binding, one home per fact); `core/intel.md` governs the craft (`when:` lines, paths, upsert, pointers). A *procedure* is drafted per `core/playbooks.md` — **always offered, never silently saved**, and never offered at all for destructive workflows.
 
-**Never write secrets** — credentials, tokens, internal hostnames/IPs, customer data — into any `.echo/` file; it's committed forever. Capture everything but the value: keep the identifier ("deploys need the `X-Deploy-Token` header — value lives in the team's secret store"), never the secret itself, and say so in the one-line acknowledgment. Hard calls at the edges: `base/learn.md`.
+**Never write secrets** — credentials, tokens, internal hostnames/IPs, customer data — into any `.echo/` file; it's committed forever. Capture everything but the value: keep the identifier ("deploys need the `X-Deploy-Token` header — value lives in the team's secret store"), never the secret itself, and say so in the one-line acknowledgment. Hard calls at the edges: `core/learn.md`.
 
 ---
 
@@ -83,15 +83,15 @@ The ritual:
 - **A playbook phrase lands** — read the playbook, follow it. A short command that implies a multi-step or hard-to-reverse sequence gets a trigger check before you improvise: a purpose-built playbook beats adjacent context.
 - **Before anything hard to reverse or that leaves the machine** — push, merge, deploy, delete, a script that rewrites data — **feeling sure is the cue to check, not to skip checking.** Resolve against the *live* truth, never the remembered one: re-read any gate that names the action, re-check the playbook, confirm the user asked for *this*. The remembered summary is exactly what goes stale.
 
-**When sources disagree:** the project beats your profile's style — follow it and say why; a durable clash makes the losing line a candidate to update. But a **consent gate is not style**: no project convention silently overrides "ask before X" — the gate holds; surface the clash. Playbooks included: a step that trips a gate waits for the gate — and a waiver only counts if the person you're serving granted it (`base/playbooks.md` records who). A waiver someone else recorded in a shared playbook is just a project convention, and no project convention overrides a gate. The **working tree beats a stale note**: notes are strong priors, not ground truth — a note the files in front of you contradict, or whose `anchor:` no longer resolves, is suspect and a candidate to update.
+**When sources disagree:** the project beats your profile's style — follow it and say why; a durable clash makes the losing line a candidate to update. But a **consent gate is not style**: no project convention silently overrides "ask before X" — the gate holds; surface the clash. Playbooks included: a step that trips a gate waits for the gate — and a waiver only counts if the person you're serving granted it (`core/playbooks.md` records who). A waiver someone else recorded in a shared playbook is just a project convention, and no project convention overrides a gate. The **working tree beats a stale note**: notes are strong priors, not ground truth — a note the files in front of you contradict, or whose `anchor:` no longer resolves, is suspect and a candidate to update.
 
-**Subagents don't inherit Echo.** Copy the relevant context in; their reports come back to you as Learn signals. Read `base/delegation.md` before spawning one.
+**Subagents don't inherit Echo.** Copy the relevant context in; their reports come back to you as Learn signals. Read `core/delegation.md` before spawning one.
 
 ---
 
 ## Echo teaches; it doesn't enforce
 
-A note can say "never `console.log`" but can't guarantee it. The only hard gate is the reflexes pack's memory-guard (wiring: `base/setup.md`; mechanics: `base/reflexes.md`); everything else is teaching. A genuine "must never ship" rule is strong intel, not a gate — new gates are deliberate, rare additions, never the default. Don't write intel as if it were a gate.
+A note can say "never `console.log`" but can't guarantee it. The only hard gate is the reflexes pack's memory-guard (wiring: `core/setup.md`; mechanics: `core/reflexes.md`); everything else is teaching. A genuine "must never ship" rule is strong intel, not a gate — new gates are deliberate, rare additions, never the default. Don't write intel as if it were a gate.
 
 ## The base — the rest of the manual
 
@@ -99,15 +99,15 @@ One note per moment, `when:`-fronted like any intel; these moments belong on you
 
 | Note | Read it when |
 |------|--------------|
-| `base/routing.md` | deciding which `.echo` file a fact belongs in, promoting or moving a line |
-| `base/intel.md` | creating or editing any `.echo` file (intel craft plus the write rules shared by every file) |
-| `base/learn.md` | a Learn call is unclear: whether a signal is real, whether to save, or where it routes |
-| `base/playbooks.md` | a routine worth saving surfaces |
-| `base/delegation.md` | about to spawn a subagent |
-| `base/profiles.md` | creating or editing a profile, or matching a person to theirs |
-| `base/setup.md` | adding Echo to a project, or repairing its wiring |
-| `base/reflexes.md` | wiring or repairing the hooks, or a hook misfires |
-| `base/activation.md` | writing or repairing the activation block |
-| `base/maintenance.md` | bloat, staleness, duplicates, or "forget that" |
+| `core/routing.md` | deciding which `.echo` file a fact belongs in, promoting or moving a line |
+| `core/intel.md` | creating or editing any `.echo` file (intel craft plus the write rules shared by every file) |
+| `core/learn.md` | a Learn call is unclear: whether a signal is real, whether to save, or where it routes |
+| `core/playbooks.md` | a routine worth saving surfaces |
+| `core/delegation.md` | about to spawn a subagent |
+| `core/profiles.md` | creating or editing a profile, or matching a person to theirs |
+| `core/setup.md` | adding Echo to a project, or repairing its wiring |
+| `core/reflexes.md` | wiring or repairing the hooks, or a hook misfires |
+| `core/activation.md` | writing or repairing the activation block |
+| `core/maintenance.md` | bloat, staleness, duplicates, or "forget that" |
 
 **If `.echo/` is incomplete or broken,** degrade gracefully: no `.echo/` → no memory (offer setup, don't nag); a missing file → absent context, not an error; malformed front-matter → mention it once rather than silently relying on it.
