@@ -103,7 +103,7 @@ One note per moment, `when:`-fronted like any intel; these moments belong on you
 | `base/intel.md` | creating or editing any `.echo` file (intel craft plus the write rules shared by every file) |
 | `base/playbooks.md` | a routine worth saving surfaces |
 | `base/delegation.md` | about to spawn a subagent |
-| `base/setup.md` | adding Echo to a project, or the user asks about or wants the reflexes pack |
+| `base/setup.md` | adding Echo to a project, or repairing its wiring |
 | `base/maintenance.md` | bloat, staleness, duplicates, "forget that", or removing Echo |
 
 **If `.echo/` is incomplete or broken,** degrade gracefully: no `.echo/` → no memory (offer setup, don't nag); a missing file → absent context, not an error; malformed front-matter → mention it once rather than silently relying on it.
