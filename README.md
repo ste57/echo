@@ -22,3 +22,6 @@ Nothing to memorize — you just talk:
 ```
 "echo: we deploy from the release branch, not main"
 ```
+
+Setup commits Echo into the repo — memory and skill travel with the project, every
+agent runs the same copy, and a pull is an upgrade.

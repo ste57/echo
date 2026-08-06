@@ -1,3 +1,6 @@
+---
+when: a Learn call is unclear — whether a signal is real, whether to save, where it routes, or how to handle a delete
+---
 # Echo Learn — reasoning at the edges
 
 SKILL.md carries the Learn rule: the signals, the judge (gate 2's two questions), reconcile, and the
@@ -60,25 +63,10 @@ profile**, not intel, because it's about you, not the project. Save it, tell the
 The boundary is *whose fact it is*: "we always squash-merge" sounds like a preference but is
 project-true — that's intel, never a profile line.
 
-**Which profile — global or project?** Route by the preference's *subject*, and give it exactly one home:
-- **About you *everywhere*** — communication style, commit/code etiquette, tooling taste ("I never add
-  co-author lines", "terse replies", "functional style") → your **global** `~/.echo/profile.md`. These
-  categories are identity *by definition*; they are never "unsure," and they never belong in a committed
-  project profile (that publishes your personal style into a team repo *and* seeds a copy that
-  re-duplicates in the next repo — the failure that quadruplicated "no co-author lines" across four files).
-- **Only makes sense in *this* repo** ("3-bullet PRs here", "the build tool is `tuist`") → the **project** profile.
-- **Genuinely torn, and it has a plausible project hook** → project (committed, visible, recoverable;
-  move it up to global later if it proves universal). A preference with *no* project hook is identity — route global.
-- **Mixed** — an everywhere principle around a here-specific instantiation ("verify by reading, don't
-  build unless asked" + "here the build is `xcodebuild`") → **split it**: principle to global, instantiation to project.
-
-**One home per preference.** Never save it project-scoped *and* copy it to global — the project profile
-inherits global, so a duplicate is pure redundancy and a drift seed (committed profiles even fork per git
-branch). Promoting an existing project line to global is therefore a **move**: write global, delete the
-now-redundant project line — *unless* that line intentionally **overrides** a different global value, in
-which case it's not a duplicate and stays. Global is per-machine and uncommitted (it doesn't ride along in
-a clone), so sync `~/.echo` yourself like a dotfile for cross-machine identity; that limit is never a
-reason to route identity habits into committed repos.
+**Which profile — global or project?** That's a routing call, and `core/routing.md` owns the whole
+procedure (subject decides, one home, promotion is a move). The Learn-boundary part is only this: a
+*stated* preference is a **sure save wherever it routes** — don't let uncertainty about the home
+downgrade the save into a proposal. Settle the home with `core/routing.md`, then save.
 
 ---
 
@@ -101,7 +89,7 @@ long gap rather than banking on later.
 
 "We never commit `console.log` to source — that can't slip" is an explicit teach carrying a
 non-negotiable. It passes the gates like any teach; what's special is honesty about *enforcement*. A
-note *teaches* but can't *guarantee*. v1's only hard gate is memory ownership (the reflexes
+note *teaches* but can't *guarantee*. The only hard gate is memory ownership (the reflexes
 memory-guard) — there is no per-rule blocking. So save it as strong, specific intel and say the limit
 out loud: if it must be machine-enforced, a lint rule or a pre-commit check in the repo is the right
 tool. Don't imply a note is a gate, and don't invent one Echo doesn't have.
@@ -110,22 +98,11 @@ tool. Don't imply a note is a gate, and don't invent one Echo doesn't have.
 
 ## Procedures (playbooks) — always offer, never save silently
 
-A playbook is a different kind of thing: not a fact to recall, a *sequence to rerun on request*.
-Even when the user names the routine outright, saving goes through an offer — you **always offer,
-never save silently**, even when sure of the steps. Two cues surface one: the user names a routine, or you just ran a multi-step
-sequence they might rerun. (You can't spot a workflow from a past session — don't pretend to.)
-
-Draft the steps from what actually ran, strip anything situational and any auto-confirm flags, show it,
-let them edit and name it; save only on a yes.
-
-Two hard boundaries:
-- **Never auto-suggest a destructive workflow.** If it force-pushes, deletes, deploys beyond local,
-  touches credentials, or migrates shared data, don't offer a playbook that runs it — capture the
-  *shape* as intel ("release force-pushes the tag — run it by hand") and stop. Stripping a `--force`
-  flag never rescues a barred workflow; the bar is on the step, not the flag. (An *explicit user
-  request* for such a playbook is different — build it, but write the dangerous step as "confirm
-  with the user, then run …", never bare. Only the user can waive that confirm; the step then
-  records the waiver.)
+A playbook is a different kind of thing: not a fact to recall, a *sequence to rerun on request* —
+and `core/playbooks.md` owns the offer, safety, and drafting rules (including waivers, which are
+**per-grantor**; that detail lives only there). The Learn-boundary calls:
+- Two cues surface an offer: the user names a routine, or you just ran a multi-step sequence they
+  might rerun. (You can't spot a workflow from a past session — don't pretend to.)
 - **A one-off isn't a playbook.** A clever one-time untangle (stash, rebase, pop the stash) with no
   nameable trigger → do nothing.
 
@@ -139,16 +116,16 @@ Always check what's already filed for the topic first:
   sibling.
 - Your fact *contradicts* it → **don't silently overwrite.** Surface both ("the note says X; this
   suggests Y — replace it?") and update only on confirmation; on a no, leave it standing and don't
-  re-ask this session. A teammate's note or a merge conflict is the same case: check its history (`git blame`; `git log --merge -p` during a conflict),
-  show both versions, let the user choose or merge.
+  re-ask this session. (A teammate's note or a merge conflict is the shared-file
+  clash case — procedure in `core/routing.md`.)
 
 ---
 
 ## Forgetting — an explicit delete
 
 "Forget that — it's not true anymore" isn't a capture and isn't a change-of-mind; it's an instruction
-to remove something already saved. Locate the note by topic or anchor, delete the stale line (or the
-whole leaf, if that empties it), and confirm in one line. Git keeps the history, so it's reversible.
+to remove something already saved. That's a delete, not a Learn call — procedure in
+`core/maintenance.md`.
 
 ---
 

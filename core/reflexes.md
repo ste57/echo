@@ -1,32 +1,35 @@
-# Echo reflexes pack (optional, shell-only)
+---
+when: wiring or repairing the reflexes hooks, a hook misfires, or you need exactly what they do
+---
+# Echo reflexes — the hooks
 
 The skill (SKILL.md) is the brain: invoked, it reads your `.echo/` memory and runs Learn by
 judgment. That delivers Echo's value but leans on the model *remembering* to do it — research calls
-the failure "memory blindness": the memory exists but never loads. The reflexes pack closes that gap
-with four **tiny shell hooks** — no Python, no interpreter to install, just POSIX `/bin/sh`.
+the failure "memory blindness": the memory exists but never loads. The reflexes hooks close that gap
+— four **tiny shell scripts** — no Python, no interpreter to install, just POSIX `/bin/sh`.
 
 The hooks stay deliberately dumb. They never parse your notes or inject file contents — each emits a
-short, **static** instruction that nudges the re-invoked `/echo` skill at the right moment. All the
+short, **static** instruction that puts the skill back in front of the model at the right moment. All the
 reading, matching, and judging is the skill's job; the hooks only guarantee the one thing prose can't.
 
-**One source of truth.** The scripts live in the installed skill — `<skill dir>/hooks/*.sh` (e.g.
-`~/.claude/skills/echo/hooks/`) — and a project carries only the settings entries pointing at them.
-Updating the skill updates every project's hooks at once; nothing is copied into repos, so nothing
-can drift. If a hook path doesn't exist on someone's machine (teammate without Echo), the entry
-fails open and does nothing.
+**One source of truth.** The scripts live in the embedded skill — `.claude/skills/echo/hooks/*.sh`,
+committed with the project — and settings carry only entries pointing at them via
+`$CLAUDE_PROJECT_DIR`. Syncing the embedded copy updates the hooks for everyone at once; nothing
+else holds a copy, so nothing can drift. A checkout without the embedded skill fails open — the
+entry runs nothing and does nothing.
 
-- **session-start** → tells the model to invoke `/echo` and read `.echo/` memory, so every session
-  (and every post-compaction continuation) starts oriented. On a plain resume it only confirms Echo
-  is still active — the context already loaded is still there, so no re-invoke. In a repo that
-  *embeds* the skill (a committed `.claude/skills/echo/`), it points the session at that copy by
-  file path instead of the `/echo` name — a personal install can shadow a skill name, but it can't
-  shadow a file read.
+- **session-start** → tells the model to read the embedded skill (`.claude/skills/echo/SKILL.md`)
+  and `.echo/` memory, so every session (and every post-compaction continuation) runs Sync. It
+  points at the copy by file path on purpose — a personal install can shadow a skill name, but it
+  can't shadow a file read; where no embedded copy exists (personal bootstrap), it says invoke
+  `/echo` instead. On a plain resume it only confirms Echo is still active — the context already
+  loaded is still there.
 - **memory-guard** → the one **hard gate**, two denies: (a) any access (read or write — it's wired
   to all tools) to the runtime's built-in memory store (`~/.claude/projects/…/memory/`) — Echo owns
   memory; the store is stale and invisible to the team; (b) a **subagent** writing into `.echo/` —
   a subagent never read the skill, so its captures skip every Learn gate (proven in the field by
   front-matter-less notes); it reports findings back and the main agent captures. Reads stay
-  allowed. It's the only hard-gate hook the pack ships.
+  allowed. It's the only hard-gate hook Echo ships.
 - **pre-commit** → on a git commit/push, asks whether a playbook governs the work in flight, points
   the model at git-area intel, and cues the Learn pass. A commit is a real "natural stop" with a
   model turn after it — the dependable capture checkpoint.
@@ -39,41 +42,35 @@ doesn't run between the trigger and the summary). So the dependable capture mome
 teaches (user-prompt) and commits (pre-commit); a long, commit-less session that auto-compacts can
 still drop an un-prompted inferred note. That's a real limit, not papered over.
 
-This is **opt-in** and runs code (shell), so always get consent before wiring. The scripts read
-nothing but the hook payload, and the pack is **fail-open** — any hook error does nothing; only the
+The hooks are a **standard component of embedding** (`core/setup.md`), and consent is structural
+rather than ceremonial: each person's runtime shows its own one-time approval prompt for the
+project's hooks, and declining leaves them inert for that person. The scripts read nothing but the
+hook payload, and everything is **fail-open** — any hook error does nothing; only the
 memory-guard's deliberate deny ever blocks.
 
 ---
 
-## Install procedure
-
-When the user opts in:
+## Wiring procedure (a standard step of embedding — `core/setup.md`)
 
 1. Wire the four hooks into settings (see **Wiring**), **idempotently**: read the existing `hooks`
    block and *append* Echo's entries into each event's array; skip any whose command already
    contains `skills/echo/hooks/` (so re-install doesn't double-register). Never overwrite a user's
    hooks. Also add `permissions.allow: ["Skill(echo)", "Write(.echo/**)", "Edit(.echo/**)",
-   "Write(~/.echo/**)", "Edit(~/.echo/**)"]` — the skill rule so session-start re-invocation isn't
-   permission-gated, the write rules so a quiet Learn save doesn't stop at a permission prompt
-   (a "quiet save" that prompts isn't quiet).
-   Default to `.claude/settings.json` (committed) — teammates with Echo installed get working hooks,
-   teammates without get inert fail-open entries; only if the user wants the wiring private, use
-   `.claude/settings.local.json`.
-2. Tell the user what was wired, that the hooks run shell from the installed skill on their machine,
-   and that they take effect from the **next** session — assume nothing changes in the current one.
-   Teammates who pull committed wiring get Claude Code's own project-hook consent prompt on their
-   first session — the consent gathered here covers only the installing dev.
+   "Write(~/.echo/**)", "Edit(~/.echo/**)"]` — the write rules keep a quiet Learn save from
+   stopping at a permission prompt (a "quiet save" that prompts isn't quiet); `Skill(echo)` only
+   matters for bootstrap installs that still invoke by name, and is inert where the name is off.
+   Default to `.claude/settings.json` (committed): the wiring travels with the project, and every
+   checkout carries the embedded scripts it points at. Use `.claude/settings.local.json` only when
+   someone wants private wiring.
+2. Tell the user what was wired and that it takes effect from the **next** session — assume nothing
+   changes in the current one. Everyone who pulls the committed wiring gets the runtime's own
+   one-time consent prompt on their first session.
 
-**Uninstall:** remove the settings entries whose command contains `skills/echo/hooks/` (and the
-`Skill(echo)` and `Write`/`Edit` `.echo` permissions if you added them). The memory itself is
-untouched.
-
-**Upgrade:** update the skill; there is nothing per-project to touch. (Legacy installs copied the
-scripts into `<project>/.echo/hooks/` — migrate by repointing the settings entries at the skill's
-`hooks/` directory and deleting `.echo/hooks/`.)
+**Upgrading:** the hooks ride the embedded copy — syncing `.claude/skills/echo/` updates them
+(`core/setup.md`); there is nothing separate to do.
 
 **No interpreter dependency.** The hooks are POSIX `sh`, present on every macOS/Linux machine.
-Windows without a POSIX shell isn't supported in v1 — Echo still works as a pure skill, just without
+Windows without a POSIX shell isn't supported — Echo still works as a pure skill, just without
 reflexes.
 
 **If something is wrong:** the only hook that can block is the memory-guard, and only on its two
@@ -85,7 +82,7 @@ hook, remove its entry from settings; the memory stays.
 ## The scripts — `hooks/` in the skill
 
 The four bodies live at `hooks/session_start.sh`, `hooks/memory_guard.sh`, `hooks/pre_commit.sh`,
-`hooks/user_prompt.sh` in the skill directory — the single copy every project runs. Read them there;
+`hooks/user_prompt.sh` in the embedded skill directory — the project's one copy, the one every session runs. Read them there;
 this document describes behavior and never restates bodies (a restated script is a second source of
 truth waiting to drift). Behavioral notes that matter:
 
@@ -112,9 +109,9 @@ truth waiting to drift). Behavioral notes that matter:
 
 ## Wiring — settings.json
 
-Append into `.claude/settings.json` (team) or `.claude/settings.local.json` (personal). The
-`Skill(echo)` permission lets the session-start re-invocation run without a prompt; the
-`Write`/`Edit` rules keep quiet Learn saves from prompting.
+Append into the project's `.claude/settings.json` (committed). The
+`Write`/`Edit` rules keep quiet Learn saves from prompting; `Skill(echo)` only matters for
+bootstrap installs that invoke by name.
 
 ```json
 {
@@ -122,25 +119,25 @@ Append into `.claude/settings.json` (team) or `.claude/settings.local.json` (per
   "hooks": {
     "SessionStart": [
       { "hooks": [ { "type": "command",
-        "command": "sh \"$HOME/.claude/skills/echo/hooks/session_start.sh\"" } ] }
+        "command": "sh \"$CLAUDE_PROJECT_DIR/.claude/skills/echo/hooks/session_start.sh\"" } ] }
     ],
     "UserPromptSubmit": [
       { "hooks": [ { "type": "command",
-        "command": "sh \"$HOME/.claude/skills/echo/hooks/user_prompt.sh\"" } ] }
+        "command": "sh \"$CLAUDE_PROJECT_DIR/.claude/skills/echo/hooks/user_prompt.sh\"" } ] }
     ],
     "PreToolUse": [
       { "matcher": ".*", "hooks": [ { "type": "command",
-        "command": "sh \"$HOME/.claude/skills/echo/hooks/memory_guard.sh\"" } ] },
+        "command": "sh \"$CLAUDE_PROJECT_DIR/.claude/skills/echo/hooks/memory_guard.sh\"" } ] },
       { "matcher": "Bash", "hooks": [ { "type": "command",
-        "command": "sh \"$HOME/.claude/skills/echo/hooks/pre_commit.sh\"" } ] }
+        "command": "sh \"$CLAUDE_PROJECT_DIR/.claude/skills/echo/hooks/pre_commit.sh\"" } ] }
     ]
   }
 }
 ```
 
 Append into each event's existing array; don't replace it. Skip any entry whose command already
-contains `skills/echo/hooks/` (idempotent re-install). If the skill is installed somewhere other
-than `~/.claude/skills/echo`, point the commands there.
+contains `skills/echo/hooks/` (idempotent re-wiring). For a personal bootstrap install with no
+embed, point the commands at `$HOME/.claude/skills/echo/hooks/` instead.
 
 Do **not** wire `session_start.sh` under **PostCompact**: its stdout never reaches the model there
 — in current Claude Code it surfaces to the *user* as a raw status line after every compaction,
@@ -156,16 +153,13 @@ the wiring above covers re-orientation on its own; remove any legacy PostCompact
   denies — the one thing Echo enforces rather than asks.
 - **Static by design.** The hooks read only the hook payload (via `grep`), never your notes — so
   adding intel, a playbook, or a profile line needs no reinstall and no code change.
-- **Hard gates in v1 = the memory-guard, and nothing else.** A genuine "this must never ship" rule
-  beyond memory ownership isn't enforced by the pack — capture it as strong intel (the note teaches
-  it). A new hard gate is a deliberate future addition, kept rare on purpose: every gate is weight;
-  priors are the default.
+- **Hard gates = the memory-guard, and nothing else.** The kernel's "Echo teaches; it doesn't
+  enforce" section governs — don't expect the hooks to police content rules.
 - **Fail-open.** Any hook error → no output → no effect. A broken hook never blocks your editor; only
   the memory-guard's deny does.
 - **Subagents.** PreToolUse hooks fire for a spawned agent's tool calls too: the memory-guard covers
   them, and the commit cue tells a subagent to report findings back rather than write `.echo/`
   itself (a subagent never read the skill, so its captures skip every gate — proven in the field by
-  a front-matter-less note). What hooks can't do is give a subagent your memory — see SKILL.md on
-  delegation for that.
+  a front-matter-less note). What hooks can't do is give a subagent your memory — see `core/delegation.md` for that.
 - **`CLAUDE_PROJECT_DIR`** locates the project at runtime; the scripts fall back to `$PWD`. Nested
   checkouts with more than one `.echo/` aren't supported — assume the repo root.

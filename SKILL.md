@@ -1,166 +1,113 @@
 ---
 name: echo
-description: Lightweight project memory for a coding agent. Use when working in a project that has an .echo/ directory (or to set one up) — to recall how the user likes to work, project facts, and hard-won gotchas, and to capture new ones. In such a project, check an area's intel the first time you touch it, and capture when the user corrects/teaches you, states a preference, or says "remember…".
+description: Lightweight project memory for AI agents. Use when working in a project that has an .echo/ directory (or to set one up) — to recall how the user likes to work, project facts, and hard-won gotchas, and to capture new ones. In such a project, check an area's intel the first time you touch it, and capture when the user corrects/teaches you, states a preference, or says "remember…".
 ---
 
 # Echo
 
-Echo gives you **memory and priors** so you don't start each session blind. Treat it as context to lean on, not rules to satisfy — it informs how you work, it doesn't constrain it. The one exception is **authority**: a consent gate in a profile, a playbook whose trigger matches, and the scope the user actually stated are not priors to weigh — they govern, and they are checked at the moment of action, never recalled from memory.
+Echo is project memory: plain markdown in the repo carrying the team's priors — how the user works, what the project is, the gotchas already paid for — so no session starts blind. Treat it as context to lean on, not rules to satisfy. The one exception is **authority**: a consent gate in a profile, a playbook whose trigger matches, and the scope the user actually stated are not priors to weigh — they govern, and they are checked at the moment of action, never recalled from memory.
 
-**In an Echo project you do four things:**
-1. **Start oriented** — read your profile + `project.md` at session start. (Nothing loads them for you; the optional reflexes pack — see Setup — reminds you, but the reading is yours.)
-2. **Glance before you touch** — the first time you work in an area this session, whether reading or editing, look at its intel. The look isn't optional; acting on what you find is judgment.
-3. **Check before you act** — before anything hard to reverse or that leaves the machine (a push, a merge, a deploy, a delete), stop and check the source: match the request against the playbook triggers, re-read any gate that names the action, and confirm the user asked for *this*. A remembered summary is exactly what goes stale — feeling sure from loaded context is the cue to check, not to skip checking.
-4. **Capture sparingly** — watch for a real signal (a correction, a teach, a stated preference, a gotcha you just solved) and note it; absent one, do nothing.
+**Echo is three behaviors:**
+1. **Sync** — before any work: load the memory, build your watchlist.
+2. **Learn** — when something worth keeping happens: save it through the gates; the default is nothing.
+3. **Resolve** — at each moment that matters: resolve it against the file, never against your memory of it.
 
-Memory lives in plain markdown under `.echo/` (and your global profile in `~/.echo/`). It's small on purpose: load a little always, reach for the rest only when relevant.
+Everything else — formats, routing, playbook drafting, maintenance — lives in the skill's `core/` notes and loads only when its moment arrives (map at the bottom).
 
----
-
-## Where things live
-
-Five kinds of file (profiles come in two scopes). Which one a fact belongs in is settled by two questions:
-
-1. **About the developer, or the project?** About you → a **profile**. About the project → `project.md` or intel.
-2. **(If about the project) identity or a discovered fact?** What the project *is* and won't change session-to-session → **`project.md`** — including a standing fact every session must know at start, as a pointer line to its full note; that's the always-on tier. Anything that runs on a schedule (a freshness stamp, a periodic refresh, a recurring check) belongs there: time is never a situation a `when:` can catch, so a session only knows something is due if the schedule is visible at start. Something you *discovered* by working — a convention, trap, or quirk → **intel**.
+## The files
 
 | File | Holds | You read it |
 |------|-------|--------|
 | `~/.echo/profile.md` | How *you* work, everywhere | always |
 | `.echo/profiles/<name>.md` | How you work *here* (overrides global) | always |
-| `.echo/project.md` | What the project *is* (stack, structure, domain) | always |
+| `.echo/project.md` | What the project *is* (stack, top-level structure, domain, always-on pointers, schedules) | always |
 | `.echo/intel/<area>/<note>.md` | A discovered fact or gotcha, scoped by `when:` | when relevant |
 | `.echo/playbooks/<name>.md` | A named workflow, run on request | on mention |
 
-**Your profile has two scopes — both Echo's, since Echo is your memory layer.** The **global** profile (`~/.echo/profile.md`) is you across every project; the **project** profile (`.echo/profiles/<name>.md` — a friendly filename; the file's `email:` front-matter is matched against your `git config user.email`, so the same person matches the same file on every machine) is you *here* and inherits the global, overriding it where they differ. A preference routes by its *subject*: about you *everywhere* → global; specific to *this* repo → the project profile. One home each — see Learn.
+**Always** = at every Sync (session start, and again after every compaction), then held for the whole session. **When relevant** = at the Resolve moment its `when:` names. **On mention** = when its trigger phrase lands.
 
-**Route by whose fact it is, never by its surface shape.** "We always squash-merge" *feels* like a preference but is project-true → intel (e.g. `intel/git/`), never a profile. "On copy changes, don't discuss styling" *feels* intel-shaped because it names a situation, but it's about *you* → a profile line (a bullet can carry its situation in prose). A profile is only ever about you; who said it and whether it has a trigger never decide the home. When it's unclear, ask **who the line binds**: a rule any teammate's session must follow — a code convention, a banned term, how this repo builds — is project-true (intel or `project.md`) however personal its origin; a profile line binds only how you work *with this person*.
+(Paths like `intel/…` abbreviate `.echo/intel/…` throughout.) Two questions settle where a fact belongs. **About the person or the project?** You → a profile; the project → `project.md` or intel. **Identity or discovery?** What the project *is* → `project.md`; what working here *taught you* → intel. One carve-out: a standing fact every session must know at start, or anything that runs on a **schedule**, goes in `project.md` as a pointer line — time is never a situation a `when:` can catch, so a session only knows something is due if the schedule is visible at start. Your project profile is the file whose `email:` front-matter matches your `git config user.email`; it inherits the global one. On a boundary case, ask **who the line binds**: a rule any teammate's session must follow is project-true however personal its origin; a profile line binds only how you work *with this person*. Full routing rules: `core/routing.md`.
 
-Most facts have one obvious home; on a boundary case, use the two questions. Profiles never collide (separate per-person files). Shared files (`project.md`, intel) *can* still conflict at git-merge time, but small single-topic notes keep any conflict to a few lines. When a shared file *does* clash — a teammate wrote the same leaf, or git left a merge conflict — never accept last-writer-wins: check the note's history (`git blame`; during a live merge conflict, `git log --merge -p -- <note>` shows both sides) to see who wrote what and when, surface both versions to the user, and let them choose or merge. (Two *live* sessions on the same machine can also race the same note — last save wins, and v1 doesn't lock; an accepted, rare, small loss.)
-
-**Echo is the memory — use it, not the model's built-in memory.** Everything you learn goes in `.echo/`, never in `CLAUDE.md`, `AGENTS.md`, scratch files, or session memory — and "learn" includes process rules and standing instructions for future sessions (those are intel or a playbook; in an Echo project you edit `CLAUDE.md`/`AGENTS.md` only on an explicit ask). The **one** standing exception is the **Echo activation block** written into `CLAUDE.md` and `AGENTS.md` at setup (see "Setting up Echo in a project"): it's a fenced pointer that *boots* Echo for every session, not memory — no learning, no facts, just the instruction to load `.echo/`. Memory itself still never lands in either. Echo *replaces* those for what you remember: one store, inspectable, shared, and versioned. If a project *already* has memory-like content in a `CLAUDE.md` or `AGENTS.md`, don't migrate it silently — note the overlap once and offer to move it into `.echo/`; treat `.echo/` as authoritative meanwhile. With the reflexes pack installed (optional shell hooks — see Setup and `reference/reflexes.md`) the built-in-store half of this is enforced, not just asked: access to the runtime's built-in memory store — reads as well as writes — is denied (`CLAUDE.md`/`AGENTS.md` and scratch files stay covered by this rule, not by a gate). That's the pack's one hard gate — the **memory-guard**.
+**Echo is the memory — use it, not the model's built-in store.** Everything you learn goes in `.echo/`, never in `CLAUDE.md`, `AGENTS.md`, scratch files, or session memory — and "learn" includes process rules and standing instructions (those are intel or a playbook; `CLAUDE.md` and `AGENTS.md` are edited only on an explicit ask, and the fenced **activation block** written into them at setup is the one standing exception: a pointer that boots Echo, never memory). Existing memory-like content in either file isn't migrated silently — note the overlap once, offer the move, treat `.echo/` as authoritative meanwhile. With the reflexes hooks wired this is enforced: the **memory-guard** denies all access to the runtime's built-in memory store.
 
 ---
 
-## Reading: reach for what's relevant
+## 1. Sync — before any work
 
-**When this skill activates in an Echo project, do this first, before other work:** (1) read `~/.echo/profile.md` (if present); (2) find your project profile — the file in `.echo/profiles/` whose `email:` front-matter matches your `git config user.email` (see `reference/format.md`) — and **if it doesn't exist, create it in the repo now** (friendly filename from the email's local part, `email:` front-matter, body empty until Learn fills it), then read it; (3) read `.echo/project.md`; (4) list `.echo/intel/` so you know what areas exist; (5) glance at each playbook's `when:` phrase in `.echo/playbooks/` — you can't recognize a trigger phrase you've never seen. A profile whose `email:` doesn't match your `git config user.email` is another person's: never load it or apply its preferences — no profile beats someone else's.
+**Run the ritual before your first action. Every session. Again, in full, after every compaction.** A ritual, not a judgment call — and the thought *"this task is too small, quick, read-only, or unrelated to need memory"* is not a reason to skip; it's the signature of the times you'll be wrong. You can't judge whether memory is relevant while blind to it. The read is cheap. Being wrong isn't.
 
-- **Always read first:** your profile (global + project) and `project.md`. They orient everything.
-- **Intel — narrow, then read:** the first time you touch an area in a session, glance at the `.echo/intel/` listing, open the area that fits what you're doing, and let each note's `when:`/`glob:` confirm it applies *right now*. The directory plus the `when:` lines are the index — there is no separate index file. Once per area, not per edit. Running a project-specific command counts as touching its area — glance before you run it, *especially* a short obvious-looking one, since a needed fallback or gotcha often hides behind exactly those.
-- **Playbooks:** a playbook declares its trigger phrase in its frontmatter `when:` line (e.g. `when: user says "ship it"`). When the user says that phrase, read the playbook and follow it. When a short command implies a multi-step or hard-to-reverse sequence, check the triggers before improvising — a purpose-built playbook beats adjacent context. A routine-sounding phrase with no matching playbook isn't an error — just do the work; it's also a cue to offer one.
+The ritual:
+1. Read `~/.echo/profile.md` if it exists.
+2. Find your project profile — the file in `.echo/profiles/` whose `email:` matches your `git config user.email`. **Missing → create it now** (friendly filename from the email's local part, `email:` front-matter, body empty until Learn fills it) — then read it. A profile whose email isn't yours is another person's: never load it, never apply it.
+3. Read `.echo/project.md`.
+4. List `.echo/intel/` and glance each area's `when:` lines.
+5. Glance every playbook's `when:` phrase in `.echo/playbooks/`.
 
-**When your profile and the project disagree, the project wins.** A preference is a prior about how *you* like to work; a project rule (in intel or `project.md`) is how *this codebase* must be. If they clash — your profile likes 2-space, the project's linter enforces 4 — follow the project and say why; if the clash is durable, the losing profile line is a candidate to update. The exception is consent: a profile line gating what you may *do* ("ask before building", "never push without asking") is not a style preference, and no project convention silently overrides it — the gate holds; surface the clash instead of resolving it by acting.
+**You are not synced until you hold the trigger sheet.** Every `when:` you just saw — intel notes, playbook phrases, the `core/` moments below — is your session's **watchlist**: *these are the moments this project wants me to watch for*. Resolve consults that sheet, not your general sense of relevance. If you can't say what's on your sheet, you read without syncing.
 
-**Memory can be stale.** It's shared through git, so it's only as current as your branch. Treat notes as strong priors, **not ground truth** — when a note disagrees with the code in front of you, the code wins, and the note is a candidate to update. A note whose `anchor:` points at code that's moved or gone is suspect; verify before trusting it.
+**Weigh while you read.** The always-on files budget at roughly a screenful (~30 lines) each. You're reading them anyway — when one has grown past that, say so and offer the trim pass (`core/maintenance.md`). Accreted bloat surfaces nowhere else.
 
-> Reading intel is always on you — no hook force-feeds you the right note. The reflexes pack re-activates you and cues Learn, but it won't read for you. So in an Echo project, err toward looking: glance at the area the first time you touch it.
-
-**Subagents don't inherit Echo.** A spawned agent never invoked `/echo` and loads none of this, so delegation is two-way. Going in: copy the relevant context — the profile lines and intel notes that bear on the task — into its prompt; the knowledge doesn't follow it automatically. Coming back: the subagent can't learn (it never sees the user and doesn't know the protocol), so its report is *your* capture point — a solved gotcha in there is a Learn signal, run the pass on it. (With the reflexes pack installed this is enforced: the memory-guard denies a subagent's writes into `.echo/` outright.)
+**After a compaction: the summary is not the files.** Your confidence is inherited, not earned — momentum straight past exactly-matching memory is how compacted sessions ship defects. Re-run the ritual, rebuild the sheet, and re-check anything your next action builds on — *including work the summary calls finished* — against the real files. Every area counts as untouched again: first-touch resets with the context. Unproposed inferred learnings died with the old context; re-derive or let them go.
 
 ---
 
-## Learn: capture what's worth keeping
+## 2. Learn — through the gates, default nothing
 
-The easy failure is capturing too much — notes nobody reads, drowning the ones that matter. **Default to doing nothing.**
+**Most sessions should save nothing.** Over-capture is the failure: notes nobody reads, drowning the ones that matter. Learn keeps **knowledge** (a fact → a profile line or intel note) and **procedures** (a workflow run by name → a playbook); procedures clear a higher bar — a wrong note misinforms, a wrong step does harm.
 
-Learn keeps two kinds of thing: **knowledge** (a fact about how you or the project work → a profile line or an intel note) and **procedures** (a multi-step workflow the user runs by name → a playbook). A procedure is held to a higher bar — you'll later *run* it, so a wrong step does real harm, where a wrong note merely misinforms.
+**Noticing is on you** — nothing interrupts you to learn:
+- **In the moment** — a correction, a teach, a stated preference is said *to you*; act when it lands. A solved gotcha has no announcement: the instant the thing that fought you finally works, *that* is the cue — save while the cause is fresh.
+- **At a natural stop** — task end, before a commit: one beat to scan for anything missed in the flow. (The reflexes hooks cue this at commits and pushes; where hooks can't run, make the beat a habit.)
 
-**Noticing a signal is on you** — nothing reliably interrupts you to capture, so catch the moment:
-- **In the moment** — a correction, a teach, or a stated preference is said *to* you; act when it lands. A solved gotcha has no announcement: the instant something that fought you finally works, *that's* the cue — capture it before you move on, while the cause is fresh.
-- **At a natural stop** — finishing a task, or before a commit, take one beat to scan the session for anything worth keeping that you missed in the flow. (The reflexes pack cues this at commits and pushes; without it, make the beat a habit — it's the backstop for everything you didn't catch live.)
-
-**Knowledge** — when a signal fires, run these gates **in order. Stop at the first "no."**
-
-1. **Signal?** Did one of these actually happen — the user *corrected* you, a *gotcha got solved* (tried X, failed, Y worked — and you confirmed Y was the cause, not just the last thing you changed; if unsure, save tentative or not at all), the user *taught* you directly or stated a firm project rule ("remember…", "we always…"), or *stated a preference* out loud? Noticed-but-unstated counts too — an implied preference or a pattern in how they work is a signal; it just routes to the *inferred* branch at gate 4. A question, normal iteration, or being wrong once about something incidental are **not** signals — and venting, sarcasm, or a joke is not a correction; if a "correction" might be tone rather than policy, confirm before treating it as a signal. No → stop.
-2. **Judge.** Would the next session get this wrong without it, *and* is it still true next week? Either "no" → stop. A fact the next session could recover just by reading the code in front of them fails this test — as does narrating the change you just made (that's the PR description's job, not memory's).
-3. **Reconcile.** Look at what's already filed for this topic and its siblings — and search by *content*, not name: grep `intel/` for the fact's key terms, since a filename or `when:` line rarely reveals what a body holds (the near-duplicate you're about to write usually lives under a name that matches a different word). Already covered → stop. Similar → update it in place. **Contradicts what's there → ask before overwriting, never silently replace** (on yes, replace the body in place — git keeps the old version; on no, leave it and don't re-ask this session).
-4. **Save.** *Sure* (explicit teach, clear correction, a firm rule, a preference the user states out loud, or a solved gotcha whose cause you confirmed) → save now and acknowledge in one line (*"noted: …"*). (A contradiction never reaches this step — gate 3's ask resolves it first; never overwrite on a teach without confirming.) *Inferred* (a preference you picked up from how they work, or a gotcha you *suspect* but didn't isolate) → don't interrupt; **propose** it, batched, at the next natural stop, and save what gets a yes. The pending batch lives only in this session's memory — a compaction wipes it — so propose at a real breakpoint (task end, before a commit) rather than across a long session; a dropped inferred note is re-derivable, but don't bank on it. (Explicit teaches save immediately and are never at risk.)
+**The gates — in order, stop at the first no:**
+1. **Signal?** The user *corrected* you; a *gotcha got solved* (tried X, failed, Y worked — cause confirmed, not just the last thing you changed; unsure → tentative or not at all); the user *taught* you or stated a firm rule ("remember…", "we always…"); or *stated a preference*. Noticed-but-unstated counts — it routes to the *inferred* branch at gate 4. Not signals: a question, normal iteration, being wrong once about something incidental. Venting or a joke is not a correction — might be tone, not policy → confirm first. No → stop.
+2. **Judge.** Would the next session get this wrong without it, *and* is it still true next week? Either no → stop. Recoverable by reading the files in front of you → fails. Narrating the change you just made → fails (that's the PR description's job).
+3. **Reconcile.** Search what's filed by *content*, not name: grep `intel/` — and the profiles, when it's a preference — for the fact's key terms — filenames and `when:` lines rarely reveal what a body holds. Covered → stop. Similar → update in place. **Contradicts → ask before overwriting. Never silently replace.**
+4. **Save.** *Sure* (explicit teach, clear correction, firm rule, stated preference, confirmed gotcha) → save now, acknowledge in one line: *"noted: …"*. A signal *shown* by behavior but never said in words is **inferred** even when it looks like a clear correction — the user silently rewriting your output is a pattern, not a teach. *Inferred* → don't interrupt; **propose it, batched, at the next natural stop** — a real breakpoint, because the pending batch dies with a compaction — and save what gets a yes.
 
 **One pass:**
 > *"No — component helpers go in a sibling `*.utils.ts`, not the component file."* → correction ✓, durable ✓, nothing filed → save to `intel/ui/file-layout.md`, note it.
-> *"Actually, don't rename that variable right now."* → looks like a correction, but it's a one-off for this task → judge fails → **do nothing.**
+> *"Actually, don't rename that variable right now."* → looks like a correction, but it's a one-off → judge fails → **do nothing.**
 
-**Where knowledge goes:** about *you* → your profile — **global** (`~/.echo/profile.md`) if it's true of you *everywhere*, the **project** profile if it's specific to this repo. About the *project* → intel or `project.md`. Two moves reach past this project, so offer them in one line rather than doing them silently:
-- **Route a preference to one home by its subject** — an identity-level habit true of you *everywhere* (communication style, commit/code etiquette, tooling taste — "I never add co-author lines", "terse replies", "functional style") is identity *by definition*: it goes to your **global** profile, is never "unsure," and never belongs in a committed project profile. A habit that only makes sense in *this* repo ("3-bullet PRs here", "the build tool is `tuist`") goes to the **project** profile. **One home per preference — never save it project-scoped *and* copy it to global; the project profile inherits global, so a duplicate is pure redundancy (and it publishes your personal style into a team repo, then re-duplicates in the next one).** A *mixed* preference splits — everywhere-principle → global, here-instantiation → project. Promoting an existing project line to global is a **move** (delete the now-redundant copy), *unless* that line intentionally *overrides* a different global value — then it stays. Global is per-machine and uncommitted (sync `~/.echo` yourself, like a dotfile, for cross-machine); that limit is never a reason to route identity into committed files.
-- **Write what looked personal as project intel** — if the user *stated* it as a team rule ("we always…"), file it directly with no offer: into `project.md` if it's identity (stack, tooling, naming — "we always use pnpm"), into intel if it's a working convention or gotcha. If you're *inferring* it's shared rather than just theirs, offer first (every teammate will read it).
+**The moment you're about to write, hand off to the core:** `core/routing.md` settles the home (subject, binding, one home per fact); `core/intel.md` governs the craft (`when:` lines, paths, upsert, pointers). A *procedure* is drafted per `core/playbooks.md` — **always offered, never silently saved**, and never offered at all for destructive workflows.
 
-**Procedures (playbooks).** A playbook is always **offered, never silently saved** — even when the user names the routine outright, they get a draft to edit, not a silent write. One surfaces when the user **names a routine** ("do the usual deploy"; "every time: test, commit, tag") or you **just ran a multi-step sequence** this task they might rerun by name. (You can't reliably spot a workflow repeated in a *past* session — don't try; lean on these in-the-moment cues.) Before offering:
-- **Worth it?** A stable, nameable routine of several steps the user treats as one thing — not a one-off, a single command, or something trivially re-derived. Unsure → it isn't one.
-- **Safe to suggest?** **Never** offer a workflow whose steps delete, force-push, deploy beyond local, touch credentials, or migrate shared data — capture the *shape* as intel ("release runs `make deploy` — do it by hand"), never a playbook that runs it. If the user *explicitly asks* for such a playbook anyway, build it their way — but write the dangerous step as "confirm with the user, then run …". You never strip that confirmation; only the user can waive it, and the step then records the waiver (the request itself is the authorization).
-- **Draft, show, confirm.** Rebuild the steps from what actually ran, drop anything situational, strip auto-confirm flags (`--force`/`--yes`; stripping a flag never rescues a workflow the safety bar barred), and show the draft for the user to edit and name. Saves only on a yes; raise it batched at a breakpoint, never mid-task; if declined, don't re-offer.
-
-If a single teach carries *both* a repeatable sequence and a durable fact, split it: the steps → a playbook, the fact → intel, and the playbook *references* the fact rather than restating it, so the fact keeps one home. One home cuts the other way too: a capture that falls inside content already filed anywhere — a playbook's steps, another note's fact, a profile line — is written as a *pointer* to that home plus the delta (a waiver, an exception, a checklist of passes), never a paraphrase — and a pointer names its target by path (`intel/api/auth.md`, never just "the auth note"): leaf names repeat across areas, so an unqualified name is ambiguous the day a second area coins the same topic; a stripped summary answers confidently and wrongly.
-
-**Never write secrets** — credentials, tokens, internal hostnames/IPs, customer data — into any `.echo/` file. It's committed to git and forever. If a gotcha's fix involves a secret, capture the *shape* ("staging needs an internal auth header — get it from 1Password"), never the value — and say in the acknowledgment that the value was left out on purpose.
-
-See `reference/learn.md` for the reasoning at the edges — where each signal is easy to misapply, and the calls that should resolve to *do nothing* — including the inferred-defer and non-negotiable-rule cases.
+**Never write secrets** — credentials, tokens, internal hostnames/IPs, customer data — into any `.echo/` file; it's committed forever. Capture everything but the value: keep the identifier ("deploys need the `X-Deploy-Token` header — value lives in the team's secret store"), never the secret itself, and say so in the one-line acknowledgment. Hard calls at the edges: `core/learn.md`.
 
 ---
 
-## Writing notes well
+## 3. Resolve — against the file, not your memory of it
 
-One idea per note. Front-matter carries its trigger:
+**One question at every new moment: is this on my sheet?** Match → open that file *before* acting — the intel note, the playbook, the core note. No match → carry on (a routine-sounding request with no matching playbook isn't an error; if it's a genuine multi-step routine, it's a cue to offer one).
 
-```markdown
----
-when: writing or editing auth / protected endpoints
-glob: ["apps/api/**/route.ts", "**/middleware.ts"]
-anchor: apps/api/src/auth/clerk.ts
----
-Protected routes call `requireUser()` from auth/clerk.ts, never read the session directly.
-Gotcha: middleware runs before handlers, so `auth()` is null in server actions unless the
-path is in the matcher config.
-```
+- **First touch of an area** — reading or editing, the first time each session: open the area and **read the bodies** of the notes whose `when:`/`glob:` match what you're doing right now — the Sync glance built the index, it doesn't discharge this read. Once per area, not per edit. **Running a project-specific command counts as touching its area.** Glance before you run it — *especially* the short, obvious-looking command; that's exactly where the gotcha hides.
+- **A playbook phrase lands** — read the playbook, follow it. A short command that implies a multi-step or hard-to-reverse sequence gets a trigger check before you improvise: a purpose-built playbook beats adjacent context.
+- **Before anything hard to reverse or that leaves the machine** — push, merge, deploy, delete, a script that rewrites data — **feeling sure is the cue to check, not to skip checking.** Resolve against the *live* truth, never the remembered one: re-read any gate that names the action, re-check the playbook, confirm the user asked for *this*. The remembered summary is exactly what goes stale.
 
-**The `when:` line is the craft.** Write it for the *future reader*, not the present moment of capture — describe the situation a later session will be *in* when it needs this (the task, file, or intent), not the symptom you just hit. A vague or over-broad line means the note never surfaces, or cries wolf. If the fact fires on running a specific command or tool, name that command *in* the `when:` — the moment someone types it is a distinct trigger from the situation that taught you, and short obvious-looking commands are exactly where the glance gets skipped.
+**When sources disagree:** the project beats your profile's style — follow it and say why; a durable clash makes the losing line a candidate to update. But a **consent gate is not style**: no project convention silently overrides "ask before X" — the gate holds; surface the clash. Playbooks included: a step that trips a gate waits for the gate — and a waiver only counts if the person you're serving granted it (`core/playbooks.md` records who). A waiver someone else recorded in a shared playbook is just a project convention, and no project convention overrides a gate. The **working tree beats a stale note**: notes are strong priors, not ground truth — a note the files in front of you contradict, or whose `anchor:` no longer resolves, is suspect and a candidate to update.
 
-```
-✅ when: handling money amounts or currency conversion   (a moment you can recognize)
-✅ when: adding or removing a source file                (a clear intent)
-❌ when: the components folder                           (a folder, not a moment)
-❌ when: working on the project                          (always true → never useful)
-```
-
-- **Deterministic path.** Pick the filename from the *topic*, not the task — auth facts always land in `intel/api/auth.md`, never `auth2.md`. Same fact learned twice → same path → git merges the words instead of leaving rival files.
-- **Reuse an area before coining one.** Before filing, list `intel/`'s existing area folders and use the closest fit — the area is the *subsystem the fact is about* (`api`, `db`, `ui`), not the task. Only create a new area when none fits; otherwise the same fact scatters across `api/`, `auth/`, and `security/`. A subsystem is never a language, framework, or tech name: in a single-stack repo `swift/` or `react/` is the closest fit for *everything*, so it attracts every note and stops discriminating — a technology name is right only for facts about the technology itself (how the language behaves, not what the app does with it). (Read areas the same way: the subsystem you're working in is the subsystem you file under.)
-- **Scope `glob:` tightly.** It's a precision *hint* for when a note is relevant — the files the fact bears on — that you use when reading an area to judge whether a note touches the file in front of you. Match only where it applies; a glob covering half the repo guides nothing. (There's no auto-injection hook in v1, so `glob:` informs your judgment rather than firing on its own.)
-- **One note, one `when:`.** If you can't write a single honest `when:` — it fires in two different situations — it's two notes; split it.
-- **A note outlives its session — save the invariant, strip the residue.** State the rule, not the incident that taught it ("these copies never diverge — whoever changes one syncs the rest", not the one recovery you ran; an incident-shaped note misses the same failure arriving from the other direction). Mark deliberate decisions ("intentional — don't revert"), but drop names and dates (git blame carries who and when) and anything the code already answers. This governs every Echo line, not just intel — a profile bullet states the preference, never the code-review story that taught it.
-- **Reconcile before writing** (gate 3): upsert — update in place, don't append a near-duplicate; if a sibling would compete for the same trigger, narrow both `when:` lines so a future agent can tell them apart. Upsert has a counterweight: if an update would make a note answer a second situation or grow past a screenful, split it into siblings with narrowed `when:` lines instead of appending. The `when:` is part of every edit: content addressed to a reader the current trigger won't summon either widens the `when:` or forces the split — a note that outgrows its trigger is invisible exactly when it's needed.
-
-Full field reference and examples: `reference/format.md`.
+**Subagents don't inherit Echo.** Copy the relevant context in; their reports come back to you as Learn signals. Read `core/delegation.md` before spawning one.
 
 ---
 
 ## Echo teaches; it doesn't enforce
 
-A note can say "use the logger, never `console.log`" — but a note can't *guarantee* it; it teaches, it doesn't gate. In v1 the only hard gate Echo has is the reflexes pack's **memory-guard** (Echo owns memory — access to the runtime's built-in memory store is denied); the pack is opt-in, so without it there are no gates at all, only teaching. A genuine "must never ship" rule beyond that is captured as strong intel for now; a new hard gate is a deliberate, rare addition, never the default (see `reference/reflexes.md`). Don't write intel as if it were a gate.
+A note can say "never `console.log`" but can't guarantee it. The only hard gate is the reflexes hooks' memory-guard (wiring: `core/setup.md`; mechanics: `core/reflexes.md`); everything else is teaching. A genuine "must never ship" rule is strong intel, not a gate — new gates are deliberate, rare additions, never the default. Don't write intel as if it were a gate.
 
----
+## The core — the rest of the manual
 
-## Setting up Echo in a project
+One note per moment, `when:`-fronted like any intel; these moments belong on your trigger sheet:
 
-If there's no `.echo/` yet and the user wants it here:
+| Note | Read it when |
+|------|--------------|
+| `core/routing.md` | deciding which `.echo` file a fact belongs in, promoting or moving a line, or resolving a clash between two versions of a note |
+| `core/intel.md` | creating or editing any `.echo` file (intel craft plus the write rules shared by every file) |
+| `core/learn.md` | a Learn call is unclear: whether a signal is real, whether to save, or where it routes |
+| `core/playbooks.md` | a routine worth saving surfaces |
+| `core/delegation.md` | about to spawn a subagent |
+| `core/profiles.md` | creating or editing a profile, or matching a person to theirs |
+| `core/setup.md` | adding Echo to a project, or repairing its wiring |
+| `core/reflexes.md` | wiring or repairing the hooks, or a hook misfires |
+| `core/activation.md` | writing or repairing the activation block |
+| `core/maintenance.md` | bloat, staleness, duplicates, or "forget that" |
 
-1. **Ask first**, then create `.echo/project.md`, `.echo/profiles/`, `.echo/intel/`, `.echo/playbooks/`.
-2. Seed `project.md` from what you can see (README, structure, stack) — draft it, let the user correct it. Scan for and strip anything secret-shaped before writing.
-3. Create their profile in `.echo/profiles/` — a friendly filename with an `email:` front-matter key for matching (format in `reference/format.md`).
-4. **Write the activation block into `CLAUDE.md` *and* `AGENTS.md`** — a fenced pointer that boots Echo for *every* teammate on *any* agent, not just those who installed the skill (`CLAUDE.md` auto-loads for Claude Code, `AGENTS.md` for Codex and other `AGENTS.md`-convention agents). It's the one time Echo touches these files, and it's a pointer, never memory. Same block in both; copy it verbatim from `reference/activation.md`.
-5. Commit all of `.echo/` **and the `CLAUDE.md`/`AGENTS.md` changes** so the team shares it — including project profiles (per-person files don't collide). Only the global `~/.echo/profile.md` stays out of any repo. (No git? Skip this step — single-user mode, below.)
-
-The global `~/.echo/profile.md` isn't part of project setup — it's per-machine, created lazily the first time a preference is promoted to global; its absence just means no global priors yet. **Echo assumes git in v1** (identity from `git config user.email`, sharing via commit) — any git host or a purely local repo; nothing assumes GitHub or a specific forge. With no git at all it still works as single-user local memory — one profile, no team sharing. Migrating an existing **squad** setup (a `.squad/` directory — Echo's predecessor system) is out of scope for v1: there's no importer — offer to port still-true facts into `.echo/` by hand, never silently.
-
-**Optional reflexes pack:** Echo works as-is but leans on you to remember to consult and capture. The `CLAUDE.md`/`AGENTS.md` activation block already boots Echo for everyone; the reflexes pack is a sharper, opt-in layer on top for those who install it (Claude Code-only — on Codex the activation block is the whole binding) — the one hard gate (memory ownership) plus cues at compaction, commit, and push that prose can't guarantee. To add it, follow [`reference/reflexes.md`](reference/reflexes.md) — small **shell** hooks (no Python, no interpreter to install) that re-invoke `/echo` at session start and after a compaction so you reload memory, **deny access to the runtime's built-in memory store** (Echo owns memory — the one hard gate), cue the Learn pass on an explicit "remember…" or "echo: …" and before each commit or push. They stay dumb: static nudges, no parsing of your notes — the skill does the reading and judging. The scripts live in the installed skill (`hooks/` — one copy serves every project; updating the skill updates them all); a project carries only the settings wiring, and everything is fail-open (a broken hook never blocks edits). Opt-in — always asks before wiring anything that runs code.
-
-**If `.echo/` is incomplete or broken,** degrade gracefully: no `.echo/` → you just have no memory (offer setup, don't nag); a missing file → absent context, not an error; a note with malformed front-matter → mention it once (*"intel/api/auth.md has no `when:` — it won't surface on its own"*) rather than silently relying on it.
-
----
-
-## Keeping it light
-
-**The always-on files have a budget.** Your profiles and `project.md` are read every session, so bloat there is the expensive kind — every line taxes every future session. Keep each one to roughly a screenful (~30 lines). Check the size **when you read one, not only when you save one** — bloat that accreted across sessions, or predates a rule you now follow, surfaces nowhere else. A save that pushes one past that still saves — but flag the size and offer a trim pass: merge overlapping lines, demote anything that no longer earns always-on cost (a rarely-needed fact belongs in intel). Like pruning, the trim is visible and approved, never silent.
-
-Upsert-don't-append keeps duplicates rare, not impossible — a misjudged "same note?" or a merge that kept both sides can still leave twins. When you happen to notice a note that's gone stale (its anchor no longer resolves) or two notes that overlap, flag it for the user — that's the maintenance, done by you, in passing. Acting on it is an on-request pass: review the changes with the user and let them approve. **Never prune silently or in the background** — removing knowledge is a deliberate, visible act, and Echo writes no maintenance files of its own.
-
-**Forgetting.** When the user says "forget that" / "that's no longer true" / "drop the note about X", treat it as a delete: locate the entry by topic or anchor, remove that note (or just the stale line within it; delete the leaf if it's left empty), and confirm in one line — *"removed: …"*. Git keeps the history, so it's reversible; don't agonize. This is distinct from a *change of mind* mid-task (which captures nothing) — it's an explicit instruction to remove something already saved.
+**If `.echo/` is incomplete or broken,** degrade gracefully: no `.echo/` → no memory (offer setup, don't nag); a missing file → absent context, not an error; malformed front-matter → mention it once rather than silently relying on it.
