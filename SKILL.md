@@ -69,7 +69,7 @@ The ritual:
 > *"No — component helpers go in a sibling `*.utils.ts`, not the component file."* → correction ✓, durable ✓, nothing filed → save to `intel/ui/file-layout.md`, note it.
 > *"Actually, don't rename that variable right now."* → looks like a correction, but it's a one-off → judge fails → **do nothing.**
 
-**The moment you're about to write, hand off to the base:** `core/routing.md` settles the home (subject, binding, one home per fact); `core/intel.md` governs the craft (`when:` lines, paths, upsert, pointers). A *procedure* is drafted per `core/playbooks.md` — **always offered, never silently saved**, and never offered at all for destructive workflows.
+**The moment you're about to write, hand off to the core:** `core/routing.md` settles the home (subject, binding, one home per fact); `core/intel.md` governs the craft (`when:` lines, paths, upsert, pointers). A *procedure* is drafted per `core/playbooks.md` — **always offered, never silently saved**, and never offered at all for destructive workflows.
 
 **Never write secrets** — credentials, tokens, internal hostnames/IPs, customer data — into any `.echo/` file; it's committed forever. Capture everything but the value: keep the identifier ("deploys need the `X-Deploy-Token` header — value lives in the team's secret store"), never the secret itself, and say so in the one-line acknowledgment. Hard calls at the edges: `core/learn.md`.
 
@@ -77,7 +77,7 @@ The ritual:
 
 ## 3. Resolve — against the file, not your memory of it
 
-**One question at every new moment: is this on my sheet?** Match → open that file *before* acting — the intel note, the playbook, the base note. No match → carry on (a routine-sounding request with no matching playbook isn't an error; if it's a genuine multi-step routine, it's a cue to offer one).
+**One question at every new moment: is this on my sheet?** Match → open that file *before* acting — the intel note, the playbook, the core note. No match → carry on (a routine-sounding request with no matching playbook isn't an error; if it's a genuine multi-step routine, it's a cue to offer one).
 
 - **First touch of an area** — reading or editing, the first time each session: open the area and **read the bodies** of the notes whose `when:`/`glob:` match what you're doing right now — the Sync glance built the index, it doesn't discharge this read. Once per area, not per edit. **Running a project-specific command counts as touching its area.** Glance before you run it — *especially* the short, obvious-looking command; that's exactly where the gotcha hides.
 - **A playbook phrase lands** — read the playbook, follow it. A short command that implies a multi-step or hard-to-reverse sequence gets a trigger check before you improvise: a purpose-built playbook beats adjacent context.
@@ -93,7 +93,7 @@ The ritual:
 
 A note can say "never `console.log`" but can't guarantee it. The only hard gate is the reflexes pack's memory-guard (wiring: `core/setup.md`; mechanics: `core/reflexes.md`); everything else is teaching. A genuine "must never ship" rule is strong intel, not a gate — new gates are deliberate, rare additions, never the default. Don't write intel as if it were a gate.
 
-## The base — the rest of the manual
+## The core — the rest of the manual
 
 One note per moment, `when:`-fronted like any intel; these moments belong on your trigger sheet:
 
