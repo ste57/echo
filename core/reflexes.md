@@ -70,7 +70,7 @@ memory-guard's deliberate deny ever blocks.
 (`core/setup.md`); there is nothing separate to do.
 
 **No interpreter dependency.** The hooks are POSIX `sh`, present on every macOS/Linux machine.
-Windows without a POSIX shell isn't supported in v1 — Echo still works as a pure skill, just without
+Windows without a POSIX shell isn't supported — Echo still works as a pure skill, just without
 reflexes.
 
 **If something is wrong:** the only hook that can block is the memory-guard, and only on its two
@@ -153,10 +153,8 @@ the wiring above covers re-orientation on its own; remove any legacy PostCompact
   denies — the one thing Echo enforces rather than asks.
 - **Static by design.** The hooks read only the hook payload (via `grep`), never your notes — so
   adding intel, a playbook, or a profile line needs no reinstall and no code change.
-- **Hard gates in v1 = the memory-guard, and nothing else.** A genuine "this must never ship" rule
-  beyond memory ownership isn't enforced by the hooks — capture it as strong intel (the note teaches
-  it). A new hard gate is a deliberate future addition, kept rare on purpose: every gate is weight;
-  priors are the default.
+- **Hard gates = the memory-guard, and nothing else.** The kernel's "Echo teaches; it doesn't
+  enforce" section governs — don't expect the hooks to police content rules.
 - **Fail-open.** Any hook error → no output → no effect. A broken hook never blocks your editor; only
   the memory-guard's deny does.
 - **Subagents.** PreToolUse hooks fire for a spawned agent's tool calls too: the memory-guard covers
